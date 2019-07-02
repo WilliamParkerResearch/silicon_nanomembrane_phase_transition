@@ -22,9 +22,12 @@ initial_parameters = (np.min(energies), 1e11, 3.5, np.min(volumes_sim))
 # parameters = (E0, K0, K0', V0)
 # E(V) = E0 + (K0 V / K0')((V0/V)^K0' / (K0' - 1) + 1) - (K0 V0/(K0' - 1))
 
-murnaghan = lambda p, v: p[0] + (p[1] * v / p[2]) * (np.power(p[3]/v, p[2]) / (p[2] - 1) + 1) - (p[1] * p[3]/(p[2] - 1))
+def murnaghan(p, v):
+    return p[0] + (p[1] * v / p[2]) * (np.power(p[3]/v, p[2]) / (p[2] - 1) + 1) - (p[1] * p[3]/(p[2] - 1))
 
-square_differences = lambda p, x, y, f: np.power(f(p, x) - y, 2).sum()
+
+def square_differences(p, x, y, f):
+    return np.power(f(p, x) - y, 2).sum()
 
 fit_parameters = sp.fmin(square_differences, initial_parameters, args=(volumes_sim, energies, murnaghan), maxiter=100000)
 
