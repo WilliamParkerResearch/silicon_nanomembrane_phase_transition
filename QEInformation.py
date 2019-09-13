@@ -3,6 +3,7 @@ import scipy.optimize as sp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from QEData import *
+import math
 
 # Use TeX fonts
 mpl.rcParams['text.usetex'] = True
@@ -12,6 +13,11 @@ mpl.rcParams['font.sans-serif'] = "cmr10"
 convergence_threshold = 7.35e-5     #this is = 1meV
 
 #definitions
+def round(n, decimals=0):
+    multiplier = 10 ** decimals
+    return int(n * multiplier) / multiplier
+
+
 def murnaghan(p, v):
     kk = p[2]-1.0
     return (p[0] + (p[1]*p[3]*(((1.0/(p[2]*kk))*np.power((v/p[3]), (-kk)))+(v/(p[2]*p[3]))-(1.0/kk))))
@@ -158,17 +164,17 @@ fit_total_energies_strain_all_BetaSn = murnaghan(fit_parameters_all_BetaSn, volu
 # print(fit_parameters_all_BetaSn)
 
         #cell_dofree ='z'
-initial_parameters_z_BetaSn = (total_energies_strain_z_BetaSn[mid(total_energies_strain_z_BetaSn)], 1e11, 3.5, volumes_sim_BetaSn[mid(volumes_sim_BetaSn)])
-fit_parameters_z_BetaSn = sp.fmin(square_differences, initial_parameters_z_BetaSn, args=(volumes_sim_BetaSn, total_energies_strain_z_BetaSn, murnaghan), maxiter=100000)
-fit_total_energies_strain_z_BetaSn = murnaghan(fit_parameters_z_BetaSn, volumes_BetaSn)
+initial_parameters_shape_BetaSn = (total_energies_strain_shape_BetaSn[mid(total_energies_strain_shape_BetaSn)], 1e11, 3.5, volumes_sim_BetaSn[mid(volumes_sim_BetaSn)])
+fit_parameters_shape_BetaSn = sp.fmin(square_differences, initial_parameters_shape_BetaSn, args=(volumes_sim_BetaSn, total_energies_strain_shape_BetaSn, murnaghan), maxiter=100000)
+fit_total_energies_strain_shape_BetaSn = murnaghan(fit_parameters_shape_BetaSn, volumes_BetaSn)
 
 # print(fit_parameters_z_BetaSn)
 
 fig8 = plt.figure(8)
 plt.plot(volumes_BetaSn, fit_total_energies_strain_all_BetaSn*6.242e18/4)
 plt.scatter(volumes_sim_BetaSn, total_energies_strain_all_BetaSn*6.242e18/4)
-plt.plot(volumes_BetaSn, fit_total_energies_strain_z_BetaSn * 6.242e18/4)
-plt.scatter(volumes_sim_BetaSn, total_energies_strain_z_BetaSn * 6.242e18/4)
+plt.plot(volumes_BetaSn, fit_total_energies_strain_shape_BetaSn * 6.242e18/4)
+plt.scatter(volumes_sim_BetaSn, total_energies_strain_shape_BetaSn * 6.242e18/4)
 plt.title(r'Equation of State of BetaSn Structure')
 plt.ylabel(r'Total Energy (eV/atom)')
 plt.xlabel(r'Volume (m$^3$/atom)')
@@ -180,8 +186,8 @@ plt.plot(volumes_diamond/1e-30, fit_total_energies_strain_diamond*6.242e18, labe
 plt.scatter(volumes_sim_diamond/1e-30, total_energies_strain_diamond*6.242e18)
 plt.plot(volumes_BetaSn/1e-30, fit_total_energies_strain_all_BetaSn*6.242e18, label='BetaSn (cell\_dofree = all)')
 plt.scatter(volumes_sim_BetaSn/1e-30, total_energies_strain_all_BetaSn*6.242e18)
-plt.plot(volumes_BetaSn/1e-30, fit_total_energies_strain_z_BetaSn*6.242e18, label='BetaSn (cell\_dofree = z)')
-plt.scatter(volumes_sim_BetaSn/1e-30, total_energies_strain_z_BetaSn*6.242e18)
+plt.plot(volumes_BetaSn/1e-30, fit_total_energies_strain_shape_BetaSn*6.242e18, label='BetaSn (cell\_dofree = z)')
+plt.scatter(volumes_sim_BetaSn/1e-30, total_energies_strain_shape_BetaSn*6.242e18)
 plt.yscale(r'linear')
 plt.title(r'Equation of State')
 plt.ylabel(r'Total Energy (eV/atom)')
@@ -191,14 +197,45 @@ plt.legend()
 #transition properties
 
 # parameters = (E0, K0, K0', V0)
-def murnaghan_prime(p, v):
-    return (p[1]/p[2])*(1-np.power((v/p[3]),-p[2]))
-div = 1000000
-vol_mash = np.concatenate((volumes_sim_diamond,volumes_sim_BetaSn))
-volume  = np.linspace(0.25*min(vol_mash), 1.75*max(vol_mash), num=div)
-diamond = murnaghan_prime(fit_parameters_diamond, volume)
-beta = murnaghan_prime(fit_parameters_z_BetaSn, volume)
+def enthal_murn(a, p):
+    e0 = a[0]
+    k0 = a[1]
+    k0prime = a[2]
+    v0 = a[3]
+    v = v0*np.power((1+p*(k0prime/k0)), (-1.0/k0prime))
+    enthalpy = e0
+    enthalpy += (k0 * v0 /(k0prime * (k0prime - 1.0))) * np.power(v/v0, (1 - k0prime))
+    enthalpy += (k0 * v0 / k0prime) * (v/v0)
+    enthalpy += -(k0 * v0 /(k0prime - 1))
+    enthalpy += p*v
+    return enthalpy
 
+
+def transition_volume(a, p):
+    e0 = a[0]
+    k0 = a[1]
+    k0prime = a[2]
+    v0 = a[3]
+    v = v0 * np.power((1 + p * (k0prime / k0)), (-1.0 / k0prime))
+    return v
+#     v = a[3]*np.power(((a[2]/a[1])*p+1),(-1/a[2]))
+#     return a[0] + a[1]*a[3]*((1/(a[2]*((a[2]-1))))*np.power((v/a[3]), (1-a[3])) + (v/(a[2]*a[3])) - (1/(a[2]-1)))
+
+    # return ((p[1]/p[2])*(np.power((v/p[3]),(-p[2]))-1))
+
+
+fit_di = np.array([0,88.4e9,4.2,20.45e-30])
+fit_be = np.array([.291/1.6e-19,106.1e9,4.6,15.34e-30])
+div = 100000
+vol_mash = np.concatenate((volumes_sim_diamond,volumes_sim_BetaSn))
+volume  = np.linspace(min(vol_mash), max(vol_mash), num=div)
+pressure = np.linspace(-50*11.7e9 ,50*11.7e9,div)
+diamond = enthal_murn(fit_parameters_diamond, pressure)
+beta = enthal_murn(fit_parameters_shape_BetaSn, pressure)
+# plt.figure()
+# plt.plot(pressure, diamond)
+# plt.plot(pressure, beta)
+# plt.show()
 matches = np.zeros(div)
 index = np.arange(0,div,1)
 
@@ -206,9 +243,13 @@ for x in index:
     add = np.array([diamond[x]/beta[x]])
     matches[x] = add
 
+diamond = diamond[np.logical_not(np.isnan(matches))]
+beta = beta[np.logical_not(np.isnan(matches))]
+pressure = pressure[np.logical_not(np.isnan(matches))]
+matches = matches[np.logical_not(np.isnan(matches))]
 def find_nearest(array, value):
     array = np.asarray(array)
-    idx = (np.abs(array - value)).argmin()
+    idx = np.argmin((np.abs(array - value)))
     return [array[idx], idx]
 
 near = find_nearest(matches, 1)
@@ -219,5 +260,16 @@ tvolume = volume[near[1]]
 print(r'Transition pressure diamond:', tpressured/1e9, r'GPa')
 print(r'Transition pressure beta:', tpressureb/1e9, r'GPa')
 print(r'transition volume:', tvolume/1e-30, r'Å^3')
+
+tpressure = pressure[near[1]]
+# print('Transition pressure diamond:', tpressure/1e9, 'GPa')
+tvol_diamond = transition_volume(fit_parameters_diamond, tpressure)
+tvol_beta = transition_volume(fit_parameters_shape_BetaSn, tpressure)
+# print(tvol_diamond*1e30)
+# print(tvol_beta*1e30)
+# print((fit_parameters_shape_BetaSn[0]-fit_parameters_diamond[0])/1.6e-19)
+# print(fit_parameters_diamond)
+
+plt.plot(volume/1e-30, (murnaghan(fit_parameters_shape_BetaSn, tvol_beta)-(volume-tvol_beta)*tpressure)*6.242e18)
 
 plt.show()
