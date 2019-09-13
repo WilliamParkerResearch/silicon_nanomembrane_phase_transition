@@ -1,8 +1,12 @@
 import numpy as np
 import scipy.optimize as sp
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from QEData import *
 
+# Use TeX fonts
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['font.sans-serif'] = "cmr10"
 
 #constants
 convergence_threshold = 7.35e-5     #this is = 1meV
@@ -41,9 +45,9 @@ def matchmaker(a,b):
 fig1 = plt.figure(1)
 plt.plot(cutoff_energies_diamond, total_energies_ecut_diamond, label='Total energy')
 plt.scatter(cutoff_energies_diamond, total_energies_ecut_diamond)
-plt.title("Cutoff Energy vs Total Energy for Diamond Structure of Si")
-plt.xlabel("Cutoff Energy (meV)")
-plt.ylabel("Total Energy (meV/atom)")
+plt.title(r"Cutoff Energy vs Total Energy for Diamond Structure of Si")
+plt.xlabel(r"Cutoff Energy (meV)")
+plt.ylabel(r"Total Energy (meV/atom)")
 plt.axhline(total_energies_ecut_diamond[-1], color='r', label='convergence energy')
 plt.axhline(total_energies_ecut_diamond[-1]-convergence_threshold, color='r', linestyle='--', label='convergence threshold')
 plt.axhline(total_energies_ecut_diamond[-1]+convergence_threshold, color='r', linestyle='--')
@@ -74,9 +78,9 @@ total_energies_ecut_diff = np.subtract(total_energies_ecut_BetaSn_matched, total
 fig3 = plt.figure(3)
 plt.plot(cutoff_energies_diamond_matched,total_energies_ecut_diff,label='energy difference')
 plt.scatter(cutoff_energies_diamond_matched, total_energies_ecut_diff)
-plt.title("Cutoff Energy vs Total Energy Differences Between Diamond Form and Beta-tin Form")
-plt.xlabel("Cutoff Energy (meV)")
-plt.ylabel("Total Energy Difference (meV/atom)")
+plt.title(r"Cutoff Energy vs Total Energy Differences Between Diamond Form and Beta-tin Form")
+plt.xlabel(r"Cutoff Energy (meV)")
+plt.ylabel(r"Total Energy Difference (meV/atom)")
 
 
 #Kpoint Information
@@ -84,9 +88,9 @@ plt.ylabel("Total Energy Difference (meV/atom)")
 fig4 = plt.figure(4)
 plt.plot(kpoints_diamond,total_energies_kpoint_diamond, label='total energy')
 plt.scatter(kpoints_diamond, total_energies_kpoint_diamond)
-plt.title("Kpoints vs Total Energy of Diamond Structure of Si")
-plt.xlabel("Number of Kpoints")
-plt.ylabel("Total Energy (meV/atom)")
+plt.title(r"Kpoints vs Total Energy of Diamond Structure of Si")
+plt.xlabel(r"Number of Kpoints")
+plt.ylabel(r"Total Energy (meV/atom)")
 plt.axhline(total_energies_kpoint_diamond[-1], color='r', label='convergence energy')
 plt.axhline(total_energies_kpoint_diamond[-1]-convergence_threshold, color='r', linestyle='--', label='convergence threshold')
 plt.axhline(total_energies_kpoint_diamond[-1]+convergence_threshold, color='r', linestyle='--')
@@ -97,9 +101,9 @@ plt.legend()
 fig5 = plt.figure(5)
 plt.plot(kpoints_BetaSn,total_energies_kpoint_BetaSn, label='total energy')
 plt.scatter(kpoints_BetaSn, total_energies_kpoint_BetaSn)
-plt.title("Kpoints vs Total Energy of BetaSn Structure of Si")
-plt.xlabel("Number of Kpoints")
-plt.ylabel("Total Energy (meV/atom)")
+plt.title(r"Kpoints vs Total Energy of BetaSn Structure of Si")
+plt.xlabel(r"Number of Kpoints")
+plt.ylabel(r"Total Energy (meV/atom)")
 plt.axhline(total_energies_kpoint_BetaSn[-1], color='r', label='convergence energy')
 plt.axhline(total_energies_kpoint_BetaSn[-1]-convergence_threshold, color='r', linestyle='--', label='convergence threshold')
 plt.axhline(total_energies_kpoint_BetaSn[-1]+convergence_threshold, color='r', linestyle='--')
@@ -118,9 +122,9 @@ total_energies_kpoint_diff = np.subtract(total_energies_kpoint_BetaSn_matched, t
 fig6 = plt.figure(6)
 plt.plot(kpoints_diamond_matched,total_energies_kpoint_diff)
 plt.scatter(kpoints_diamond_matched, total_energies_kpoint_diff)
-plt.title("Kpoints vs Total Energy Differences Between Diamond Form and Beta-tin Form")
-plt.xlabel("Number of Kpoints")
-plt.ylabel("Total Energy Difference (meV/atom)")
+plt.title(r"Kpoints vs Total Energy Differences Between Diamond Form and Beta-tin Form")
+plt.xlabel(r"Number of Kpoints")
+plt.ylabel(r"Total Energy Difference (meV/atom)")
 
 
 #Murnaghan Equation of State Information
@@ -138,9 +142,9 @@ fit_total_energies_strain_diamond = murnaghan(fit_parameters_diamond, volumes_di
 fig7 = plt.figure(7)
 plt.plot(volumes_diamond, fit_total_energies_strain_diamond*6.242e18/8)
 plt.scatter(volumes_sim_diamond, total_energies_strain_diamond*6.242e18/8)
-plt.title('Equation of State of Diamond Structure')
-plt.ylabel('Total Energy (eV/atom)')
-plt.xlabel('Volume (m^3/atom)')
+plt.title(r'Equation of State of Diamond Structure')
+plt.ylabel(r'Total Energy (eV/atom)')
+plt.xlabel(r'Volume (m$^3$/atom)')
 
 #     #BetaSn
 volumes_sim_BetaSn = (celldm_3_BetaSn/4)*np.power(lattice_parameters_BetaSn, 3)
@@ -165,23 +169,23 @@ plt.plot(volumes_BetaSn, fit_total_energies_strain_all_BetaSn*6.242e18/4)
 plt.scatter(volumes_sim_BetaSn, total_energies_strain_all_BetaSn*6.242e18/4)
 plt.plot(volumes_BetaSn, fit_total_energies_strain_z_BetaSn * 6.242e18/4)
 plt.scatter(volumes_sim_BetaSn, total_energies_strain_z_BetaSn * 6.242e18/4)
-plt.title('Equation of State of BetaSn Structure')
-plt.ylabel('Total Energy (eV/atom)')
-plt.xlabel('Volume (m^3/atom)')
+plt.title(r'Equation of State of BetaSn Structure')
+plt.ylabel(r'Total Energy (eV/atom)')
+plt.xlabel(r'Volume (m$^3$/atom)')
 
 
             #multiple plot
 fig9 = plt.figure(9)
 plt.plot(volumes_diamond/1e-30, fit_total_energies_strain_diamond*6.242e18, label='Diamond')
 plt.scatter(volumes_sim_diamond/1e-30, total_energies_strain_diamond*6.242e18)
-plt.plot(volumes_BetaSn/1e-30, fit_total_energies_strain_all_BetaSn*6.242e18, label='BetaSn (cell_dofree = all)')
+plt.plot(volumes_BetaSn/1e-30, fit_total_energies_strain_all_BetaSn*6.242e18, label='BetaSn (cell\_dofree = all)')
 plt.scatter(volumes_sim_BetaSn/1e-30, total_energies_strain_all_BetaSn*6.242e18)
-plt.plot(volumes_BetaSn/1e-30, fit_total_energies_strain_z_BetaSn*6.242e18, label='BetaSn (cell_dofree = z)')
+plt.plot(volumes_BetaSn/1e-30, fit_total_energies_strain_z_BetaSn*6.242e18, label='BetaSn (cell\_dofree = z)')
 plt.scatter(volumes_sim_BetaSn/1e-30, total_energies_strain_z_BetaSn*6.242e18)
-plt.yscale('linear')
-plt.title('Equation of State')
-plt.ylabel('Total Energy (eV/atom)')
-plt.xlabel('Volume (Angstrom^3/atom)')
+plt.yscale(r'linear')
+plt.title(r'Equation of State')
+plt.ylabel(r'Total Energy (eV/atom)')
+plt.xlabel(r'Volume (\r{A}$^3$/atom)')
 plt.legend()
 
 #transition properties
@@ -212,8 +216,8 @@ print(near)
 tpressured = diamond[near[1]]
 tpressureb = beta[near[1]]
 tvolume = volume[near[1]]
-print('Transition pressure diamond:', tpressured/1e9, 'GPa')
-print('Transition pressure beta:', tpressureb/1e9, 'GPa')
-print('transition volume:', tvolume/1e-30,'Angstrom^3')
+print(r'Transition pressure diamond:', tpressured/1e9, r'GPa')
+print(r'Transition pressure beta:', tpressureb/1e9, r'GPa')
+print(r'transition volume:', tvolume/1e-30, r'Å^3')
 
 plt.show()
