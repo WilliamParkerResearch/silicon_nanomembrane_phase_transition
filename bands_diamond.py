@@ -56,7 +56,7 @@ exec(f'max_eigenvalue = np.sort(bands_eigenvalues_diamond_{n_bands_diamond})[-1]
 
 
 fig = plt.figure()
-plt.suptitle(r'$\vec{k}$-point and Density of State Energy Bands for ' + structure_names[0] + ' ' + chemical_formula)
+plt.suptitle(r'$\vec{k}$-point and Density of State Electrical Energy Bands for ' + structure_names[0] + ' ' + chemical_formula)
 gs = GridSpec(1, len(disc_points_diamond)+1, width_ratios=ratio_array)
 
 for i in range(num_disc):
@@ -101,3 +101,5 @@ ax_last.plot(density_diamond,dos_energies_diamond - fermi_energy_diamond)
 ax_last.set_xlabel(r'Electric Density (E)')
 plt.subplots_adjust(wspace=0.05)
 plt.show()
+
+print(ratio_array)

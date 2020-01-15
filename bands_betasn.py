@@ -55,7 +55,7 @@ exec(f'max_eigenvalue = np.sort(bands_eigenvalues_betasn_{n_bands_betasn})[-1] -
 
 
 fig = plt.figure()
-fig.suptitle(r'$\vec{k}$-point and Density of State Energy Bands for ' + structure_names[1] + ' ' + chemical_formula, )
+fig.suptitle(r'$\vec{k}$-point and Density of State Electrical Energy Bands for ' + structure_names[1] + ' ' + chemical_formula, )
 gs = GridSpec(1, len(disc_points_betasn)+1, width_ratios=ratio_array)
 
 for i in range(num_disc):
