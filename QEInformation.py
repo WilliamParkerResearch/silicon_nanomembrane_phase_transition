@@ -1,10 +1,3 @@
-# Things to do:
-#   Moving the individual graph properties (xlabels, ylabels, etc.) to arrays so we can easily modify their formatting
-#   Fix the scale of the y-axes in certain plots,
-#   Changing the conversion factors as variable names: ? = 6.242e18
-#   Convert total energies in convergence plots to difference in total energy from converged total energy
-#   Put Hermann-Mauguin notation in plot legends
-#
 import scipy.optimize as sp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -186,7 +179,7 @@ plt.ylabel(r"Total Energy Difference (meV/atom)")
 #           parameters = (E0, K0, K0', V0)
 
 #   Diamond structure calculations
-volumes_sim_diamond = np.power(lattice_parameters_diamond, 3) / number_of_atoms[0]
+volumes_sim_diamond = np.power(lattice_parameters_diamond, 3) / n_atom_diamond
 initial_parameters_diamond = (total_energies_strain_diamond[mid(total_energies_strain_diamond)], 1e11, 3.5, volumes_sim_diamond[mid(volumes_sim_diamond)])
 fit_parameters_diamond = sp.fmin(square_differences, initial_parameters_diamond, args=(volumes_sim_diamond, total_energies_strain_diamond, murnaghan), maxiter=100000)
 volumes_diamond = np.linspace(volumes_sim_diamond[0], volumes_sim_diamond[-1], num=100)
@@ -196,15 +189,15 @@ fit_total_energies_strain_diamond = murnaghan(fit_parameters_diamond, volumes_di
 #   Diamond structure plot
 figure_index += 1
 fig7 = plt.figure(figure_index+1)
-plt.plot(volumes_diamond, fit_total_energies_strain_diamond*6.242e18 / number_of_atoms[0])
-plt.scatter(volumes_sim_diamond, total_energies_strain_diamond*6.242e18 / number_of_atoms[0])
+plt.plot(volumes_diamond, fit_total_energies_strain_diamond*6.242e18 / n_atom_diamond)
+plt.scatter(volumes_sim_diamond, total_energies_strain_diamond*6.242e18 / n_atom_diamond)
 plt.title(plot_titles[figure_index])
 plt.xlabel(plot_xlabels[figure_index])
 plt.ylabel(r'Total Energy (eV/atom)')
 
 
 #     Beta-Sn structure calculations
-volumes_sim_BetaSn = (celldm_3_BetaSn / number_of_atoms[1])*np.power(lattice_parameters_BetaSn, 3)
+volumes_sim_BetaSn = (celldm_3_BetaSn / n_atom_betasn)*np.power(lattice_parameters_BetaSn, 3)
 volumes_BetaSn = np.linspace(volumes_sim_BetaSn[0], volumes_sim_BetaSn[-1], num=100)
 #
 #       cell_dofree ='all' values
@@ -213,7 +206,7 @@ fit_parameters_all_BetaSn = sp.fmin(square_differences, initial_parameters_all_B
 fit_total_energies_strain_all_BetaSn = murnaghan(fit_parameters_all_BetaSn, volumes_BetaSn)
 # print(fit_parameters_all_BetaSn)
 
-#       cell_dofree ='z' values
+        #cell_dofree ='shape' values
 initial_parameters_shape_BetaSn = (total_energies_strain_shape_BetaSn[mid(total_energies_strain_shape_BetaSn)], 1e11, 3.5, volumes_sim_BetaSn[mid(volumes_sim_BetaSn)])
 fit_parameters_shape_BetaSn = sp.fmin(square_differences, initial_parameters_shape_BetaSn, args=(volumes_sim_BetaSn, total_energies_strain_shape_BetaSn, murnaghan), maxiter=100000)
 fit_total_energies_strain_shape_BetaSn = murnaghan(fit_parameters_shape_BetaSn, volumes_BetaSn)
@@ -222,10 +215,10 @@ fit_total_energies_strain_shape_BetaSn = murnaghan(fit_parameters_shape_BetaSn, 
 #   Beta-Sin structure plot
 figure_index += 1
 fig8 = plt.figure(figure_index+1)
-plt.plot(volumes_BetaSn, fit_total_energies_strain_all_BetaSn*6.242e18 / number_of_atoms[1])
-plt.scatter(volumes_sim_BetaSn, total_energies_strain_all_BetaSn*6.242e18 / number_of_atoms[1])
-plt.plot(volumes_BetaSn, fit_total_energies_strain_shape_BetaSn * 6.242e18 / number_of_atoms[1])
-plt.scatter(volumes_sim_BetaSn, total_energies_strain_shape_BetaSn * 6.242e18 / number_of_atoms[1])
+plt.plot(volumes_BetaSn, fit_total_energies_strain_all_BetaSn*6.242e18 / n_atom_betasn)
+plt.scatter(volumes_sim_BetaSn, total_energies_strain_all_BetaSn*6.242e18 / n_atom_betasn)
+plt.plot(volumes_BetaSn, fit_total_energies_strain_shape_BetaSn * 6.242e18 / n_atom_betasn)
+plt.scatter(volumes_sim_BetaSn, total_energies_strain_shape_BetaSn * 6.242e18 / n_atom_betasn)
 plt.title(plot_titles[7])
 plt.ylabel(r'Total Energy (eV/atom)')
 plt.xlabel(r'Volume (m$^3$/atom)')
@@ -273,24 +266,15 @@ def transition_volume(a, p):
     v0 = a[3]
     v = v0 * np.power((1 + p * (k0prime / k0)), (-1.0 / k0prime))
     return v
-#     v = a[3]*np.power(((a[2]/a[1])*p+1),(-1/a[2]))
-#     return a[0] + a[1]*a[3]*((1/(a[2]*((a[2]-1))))*np.power((v/a[3]), (1-a[3])) + (v/(a[2]*a[3])) - (1/(a[2]-1)))
-
-    # return ((p[1]/p[2])*(np.power((v/p[3]),(-p[2]))-1))
 
 
-fit_di = np.array([0,88.4e9,4.2,20.45e-30])
-fit_be = np.array([.291/1.6e-19,106.1e9,4.6,15.34e-30])
+
 div = 100000
 vol_mash = np.concatenate((volumes_sim_diamond,volumes_sim_BetaSn))
 volume = np.linspace(min(vol_mash), max(vol_mash), num=div)
 pressure = np.linspace(-50*11.7e9 ,50*11.7e9,div)
 diamond = enthal_murn(fit_parameters_diamond, pressure)
 beta = enthal_murn(fit_parameters_shape_BetaSn, pressure)
-# plt.figure()
-# plt.plot(pressure, diamond)
-# plt.plot(pressure, beta)
-# plt.show()
 matches = np.zeros(div)
 index = np.arange(0,div,1)
 
@@ -331,4 +315,4 @@ print(fit_parameters_diamond)
 
 plt.plot(volume/cubic_meters_per_cubic_angstrom, (murnaghan(fit_parameters_shape_BetaSn, tvol_beta)-(volume-tvol_beta)*tpressure)*6.242e18)
 
-plt.show()
+# plt.show()
