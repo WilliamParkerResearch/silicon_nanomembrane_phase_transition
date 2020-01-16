@@ -101,5 +101,3 @@ ax_last.plot(density_diamond,dos_energies_diamond - fermi_energy_diamond)
 ax_last.set_xlabel(r'Electric Density (E)')
 plt.subplots_adjust(wspace=0.05)
 plt.show()
-
-print(ratio_array)

@@ -1,8 +1,6 @@
 from tkinter import *
 from eos_information import *
 import numpy as np
-
-
 #ecut plot executers
 def ecut_diamond():
     exec(open("ecut_energies_diamond.py").read())
