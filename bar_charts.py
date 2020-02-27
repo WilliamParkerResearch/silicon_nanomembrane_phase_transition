@@ -61,7 +61,7 @@ ax.text(horizontal_positions[-1]+label_shift, experimental_transition_pressure_m
 
 fig.tight_layout()
 
-plt.show()
+plt.savefig('Si.Transition_pressure.png')
 
 # Volumes per atom diamond plot
 fig, ax = plt.subplots()
@@ -98,4 +98,5 @@ ax.set_ylim([(1.0 - factor_away_from_experiment)*diamond_experimental_volume_per
 
 fig.tight_layout()
 
-plt.show()
+plt.savefig('Si.Volume_per_atom.png')
+

@@ -50,6 +50,6 @@ ax2.plot(dos_betasn, icm_to_THz*dos_frequencies_betasn)
 ax2.tick_params(labelleft=False)
 ax2.set_xlabel(r'Density of State')
 plt.subplots_adjust(wspace=0.25)
-
+plt.ylim(0, 16)
 
 plt.show()
