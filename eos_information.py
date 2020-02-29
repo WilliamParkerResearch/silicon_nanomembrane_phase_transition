@@ -1,6 +1,15 @@
 import scipy.optimize as sp
 import matplotlib as mpl
-from QEData import *
+
+# Parameters
+number_of_volume_points = 100
+exchange_correlation = 'PZ'
+if exchange_correlation == 'PZ':
+    from QEData_pz import *
+elif exchange_correlation == 'PBE':
+    from QEData import *
+elif exchange_correlation == 'SCAN':
+    from QEData_scan import *
 
 # Use TeX fonts
 mpl.rcParams['text.usetex'] = True
@@ -28,13 +37,13 @@ def murnaghan(p, v):
 volumes_sim_diamond = np.power(lattice_parameters_diamond, 3) / n_atom_diamond
 initial_parameters_diamond = (total_energies_strain_diamond[mid(total_energies_strain_diamond)], 1e11, 3.5, volumes_sim_diamond[mid(volumes_sim_diamond)])
 fit_parameters_diamond = sp.fmin(square_differences, initial_parameters_diamond, args=(volumes_sim_diamond, total_energies_strain_diamond, murnaghan), maxiter=100000)
-volumes_diamond = np.linspace(volumes_sim_diamond[0], volumes_sim_diamond[-1], num=100)
+volumes_diamond = np.linspace(volumes_sim_diamond[0], volumes_sim_diamond[-1], num=number_of_volume_points)
 fit_total_energies_strain_diamond = murnaghan(fit_parameters_diamond, volumes_diamond)
 
 
 #     Beta-Sn structure calculations
 volumes_sim_BetaSn = (celldm_3_BetaSn / n_atom_betasn)*np.power(lattice_parameters_BetaSn, 3)
-volumes_BetaSn = np.linspace(volumes_sim_BetaSn[0], volumes_sim_BetaSn[-1], num=100)
+volumes_BetaSn = np.linspace(volumes_sim_BetaSn[0], volumes_sim_BetaSn[-1], num=number_of_volume_points)
 #
 #       cell_dofree ='all' values
 initial_parameters_all_BetaSn = (total_energies_strain_all_BetaSn[mid(total_energies_strain_all_BetaSn)], 1e11, 3.5, volumes_sim_BetaSn[mid(volumes_sim_BetaSn)])
@@ -85,7 +94,7 @@ def transition_volume(a, p):
 
 div = 100000
 vol_mash = np.concatenate((volumes_sim_diamond,volumes_sim_BetaSn))
-volume = np.linspace(min(vol_mash), max(vol_mash), num=div)
+volume = np.linspace(min(vol_mash), max(vol_mash), num=number_of_volume_points)
 pressure = np.linspace(-50*11.7e9 ,50*11.7e9,div)
 diamond = enthal_murn(fit_parameters_diamond, pressure)
 beta = enthal_murn(fit_parameters_shape_BetaSn, pressure)

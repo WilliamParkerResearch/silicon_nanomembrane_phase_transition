@@ -3,8 +3,6 @@ import numpy as np
 #This is the data obtained from quantum esspresso
 #pbe-nl-kjpaw_psl.1.0.0
 
-
-
 # Unit conversion factors and constants
 eV_per_Rydberg = 13.605693122  # Rydberg constant in eV
 meV_per_eV = 1000
@@ -19,8 +17,6 @@ chemical_formula = 'Si'
 structure_names = ['$Fd\overline{3}m$', '$I4_{1}/amd$']  # Hermann-Mauguin notation for diamond & beta-Sn structures
 n_atom_diamond = 8
 n_atom_betasn = 4
-
-
 
 #Diamond
 total_energies_ecut_diamond = np.array([-373.75757335, -373.79925178, -373.81116034, -373.81362426, -373.81415304, -373.81421453, -373.81426238, -373.81430259, -373.81431640])

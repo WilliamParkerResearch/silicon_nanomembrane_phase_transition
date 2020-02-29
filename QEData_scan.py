@@ -1,8 +1,7 @@
 import numpy as np
+
 #This is the data obtained from quantum esspresso
 #scan-van.3
-
-
 
 # Unit conversion factors and constants
 eV_per_Rydberg = 13.605693122  # Rydberg constant in eV
