@@ -9,7 +9,7 @@ import matplotlib as mpl
 
 # Parameters
 number_of_volume_points = 100
-exchange_correlation = 'PBE'
+exchange_correlation = 'PZ'
 chemical_formula = 'Si'
 structure_names = ['$Fd\overline{3}m$', '$I4_{1}/amd$']  # Hermann-Mauguin notation for diamond & beta-Sn structures
 n_atom_diamond = 8
@@ -18,7 +18,7 @@ n_atom_betasn = 4
 # Conversion factors
 cubic_meters_per_cubic_angstrom = 1e-30
 joules_per_Rydberg = 2.1798741e-18
-
+print(exchange_correlation)
 # Data
 if exchange_correlation == 'PBE':
     figure_file_name = 'Si.PBE_1ML.EoS.png'
@@ -36,7 +36,7 @@ if exchange_correlation == 'PBE':
     volumes_sim_BetaSn = cubic_meters_per_cubic_angstrom*np.array([23.63033394677,25.73080807936,25.99336734596,26.25592661255,26.25592661255,26.51848587909,26.78104514568,28.88151927827,31.50711193656,34.13270459479])
     total_energies_strain_BetaSn = (joules_per_Rydberg/n_atom_betasn)*np.array([-186.54976560,-186.55931303,-186.55961402,-186.55971389,-186.55971389,-186.55961507,-186.55931838,-186.55006955,-186.52439387,-186.47946622])
 
-elif exchange_correlation == 'PZ':
+if exchange_correlation == 'PZ':
     figure_file_name = 'Si.PZ_1ML.EoS.png'
     volumes_sim_diamond = cubic_meters_per_cubic_angstrom*np.array([14.08392451545,16.09591373539,18.10790294570,19.71749432455,19.91869324267,20.11989216564,20.11989216564,20.32109108858,20.52229000673,22.13188138559,24.14387059586,26.15585981581])
     total_energies_strain_diamond = (joules_per_Rydberg/n_atom_diamond)*np.array([-90.51829730,-90.62944720,-90.70666769,-90.72996962,-90.73070834,-90.73095209,-90.73095209,-90.73070994,-90.72997869,-90.70955754,-90.66993654,-90.60806563])
@@ -48,7 +48,7 @@ elif exchange_correlation == 'PZ':
     volumes_sim_BetaSn = cubic_meters_per_cubic_angstrom*np.array([13.38157343251,15.05427010886,16.39242745286,16.55969712631,16.72696679248,16.72696679248,16.89423645866,17.06150613210,18.39966347610,20.07236015245,21.74505682875])
     total_energies_strain_BetaSn = (joules_per_Rydberg/n_atom_betasn)*np.array([-45.19559075,-45.21462844,-45.21920332,-45.21922258,-45.21913143,-45.21913143,-45.21893224,-45.21862437,-45.21185813,-45.19217933,-45.16288506])
 
-elif exchange_correlation == 'SCAN':
+if exchange_correlation == 'SCAN':
     figure_file_name = 'Si.SCAN_1ML.EoS.png'
     volumes_sim_diamond = cubic_meters_per_cubic_angstrom*np.array([15.93529964919,17.92721209824,19.52074206884,19.71993331044,19.91912455677,19.91912455677,20.11831580309,20.31750704466,21.91103701526,23.90294946430])
     total_energies_strain_diamond = (joules_per_Rydberg/n_atom_diamond)*np.array([-62.34036437,-62.49221543,-62.53738742,-62.53589659,-62.53676157,-62.53699016,-62.53684557,-62.53579955,-62.50937811,-62.43660083])
@@ -59,7 +59,7 @@ elif exchange_correlation == 'SCAN':
     volumes_sim_BetaSn = cubic_meters_per_cubic_angstrom*np.array([20.20406722585,22.72957562906,24.74998235166,25.00253319197,25.25508403227,25.25508403227,25.50763487263,25.76018571294,27.78059243554,30.30610083875,32.83160924196])
     total_energies_strain_BetaSn = (joules_per_Rydberg/n_atom_betasn)*np.array([-31.06535235,-31.08317680,-31.09456583,-31.09493016,-31.09515189,-31.09515189,-31.09511682,-31.09486093,-31.08511596,-31.05350619,-31.00657811])
 
-
+print(total_energies_strain_diamond)
 def mid(x):
     return int((len(x)-1)/2)
 
@@ -128,14 +128,14 @@ def transition_volume(a, p):
     v = v0 * np.power((1 + p * (k0prime / k0)), (-1.0 / k0prime))
     return v
 
-#div = 100000
+div = 100000
 vol_mash = np.concatenate((volumes_sim_diamond,volumes_sim_BetaSn))
-volume = np.linspace(min(vol_mash), max(vol_mash), num=number_of_volume_points)
-pressure = np.linspace(-50*11.7e9 ,50*11.7e9,number_of_volume_points)
+volume = np.linspace(min(vol_mash), max(vol_mash), num=div)
+pressure = np.linspace(-50*11.7e9 ,50*11.7e9,div)
 diamond = enthal_murn(fit_parameters_diamond, pressure)
 beta = enthal_murn(fit_parameters_shape_BetaSn, pressure)
-matches = np.zeros(number_of_volume_points)
-index = np.arange(0,number_of_volume_points,1)
+matches = np.zeros(div)
+index = np.arange(0,div,1)
 
 for x in index:
     add = np.array([diamond[x]/beta[x]])
@@ -187,6 +187,7 @@ t_pres = round(1e-9*tpressure, 2)
 #
 #
 # plt.show()
-#print(t_pres)
-#print(vol_0_diamond)
-#print(vol_0_betasn)
+print(t_pres)
+print(tvol_diamond)
+print(tvol_beta)
+print(vol_0_betasn)
