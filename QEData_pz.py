@@ -3,20 +3,6 @@ import numpy as np
 # This is the data obtained from quantum esspresso
 # pz-n-rrkjus_psl.0.1
 
-# Unit conversions
-total_energies_ecut_diamond = (13.601e-3/8)*total_energies_ecut_diamond                                     #(MeV/atom)
-total_energies_kpoint_diamond = (13.601e-3/8)*total_energies_kpoint_diamond
-total_energies_ecut_BetaSn = (13.601e-3/4)*total_energies_ecut_BetaSn
-total_energies_kpoint_BetaSn = (13.601e-3/4)*total_energies_kpoint_BetaSn
-total_energies_strain_diamond = (2.1798741e-18/8)*total_energies_strain_diamond                           #(Joules/atom)
-total_energies_strain_all_BetaSn = (2.1798741e-18/4)*total_energies_strain_all_BetaSn
-total_energies_strain_shape_BetaSn = (2.1798741e-18/4)*total_energies_strain_shape_BetaSn
-cutoff_energies_diamond = 13.601e-3*cutoff_energies_diamond                                                     #(MeV)
-cutoff_energies_BetaSn = 13.601e-3*cutoff_energies_BetaSn
-lattice_parameters_diamond = 5.29177e-11*lattice_parameters_diamond                                           #(meters)
-lattice_parameters_BetaSn = 5.29177e-11*lattice_parameters_all_BetaSn
-celldm_1_diamond = 5.29177e-11*celldm_1_diamond
-celldm_1_BetaSn = 5.29177e-11*celldm_1_BetaSn
 n_atom_diamond = 8
 n_atom_betasn = 4
 
@@ -42,3 +28,17 @@ lattice_parameters_shape_BetaSn = np.array([8.51788, 8.60755, 8.69721, 8.78687, 
 celldm_1_BetaSn = 8.96619465
 celldm_3_BetaSn = 0.554456931
 
+# Unit conversions
+total_energies_ecut_diamond = (13.601e-3/8)*total_energies_ecut_diamond                                     #(MeV/atom)
+total_energies_kpoint_diamond = (13.601e-3/8)*total_energies_kpoint_diamond
+total_energies_ecut_BetaSn = (13.601e-3/4)*total_energies_ecut_BetaSn
+total_energies_kpoint_BetaSn = (13.601e-3/4)*total_energies_kpoint_BetaSn
+total_energies_strain_diamond = (2.1798741e-18/8)*total_energies_strain_diamond                           #(Joules/atom)
+total_energies_strain_all_BetaSn = (2.1798741e-18/4)*total_energies_strain_all_BetaSn
+total_energies_strain_shape_BetaSn = (2.1798741e-18/4)*total_energies_strain_shape_BetaSn
+cutoff_energies_diamond = 13.601e-3*cutoff_energies_diamond                                                     #(MeV)
+cutoff_energies_BetaSn = 13.601e-3*cutoff_energies_BetaSn
+lattice_parameters_diamond = 5.29177e-11*lattice_parameters_diamond                                           #(meters)
+lattice_parameters_BetaSn = 5.29177e-11*lattice_parameters_all_BetaSn
+celldm_1_diamond = 5.29177e-11*celldm_1_diamond
+celldm_1_BetaSn = 5.29177e-11*celldm_1_BetaSn

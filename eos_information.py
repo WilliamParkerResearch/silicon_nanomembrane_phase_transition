@@ -3,18 +3,26 @@ import matplotlib as mpl
 
 # Parameters
 number_of_volume_points = 100
-exchange_correlation = 'PZ'
+number_of_enthalpy_samples = 100000
+pressure_extreme = 50*11.7e9
+exchange_correlation = 'SCAN'
 if exchange_correlation == 'PZ':
     from QEData_pz import *
 elif exchange_correlation == 'PBE':
     from QEData import *
+    figure_file_name = 'Si.PBE.EoS.png'
 elif exchange_correlation == 'SCAN':
     from QEData_scan import *
+
+figure_file_name = 'Si.' + exchange_correlation + '.EoS.png'
+
+# Conversion factors
+cubic_meters_per_cubic_angstrom = 1e-30
+joules_per_Rydberg = 2.1798741e-18
 
 # Use TeX fonts
 mpl.rcParams['text.usetex'] = True
 mpl.rcParams['font.sans-serif'] = "cmr10"
-
 
 def mid(x):
     return int((len(x)-1)/2)
@@ -26,8 +34,8 @@ def square_differences(p, x, y, f):
 
 def murnaghan(p, v):
     kk = p[2]-1.0
-    return (p[0] + (p[1]*p[3]*(((1.0/(p[2]*kk))*np.power((v/p[3]), (-kk)))+(v/(p[2]*p[3]))-(1.0/kk))))
-
+    return p[0] + (p[1] * p[3] * (((1.0 / (p[2] * kk)) * np.power((v / p[3]), (-kk))) +
+                                  (v / (p[2] * p[3])) - (1.0 / kk)))
 
 
 # Murnaghan Equation of State Information
@@ -40,18 +48,17 @@ fit_parameters_diamond = sp.fmin(square_differences, initial_parameters_diamond,
 volumes_diamond = np.linspace(volumes_sim_diamond[0], volumes_sim_diamond[-1], num=number_of_volume_points)
 fit_total_energies_strain_diamond = murnaghan(fit_parameters_diamond, volumes_diamond)
 
-
-#     Beta-Sn structure calculations
+#   Beta-Sn structure calculations
 volumes_sim_BetaSn = (celldm_3_BetaSn / n_atom_betasn)*np.power(lattice_parameters_BetaSn, 3)
 volumes_BetaSn = np.linspace(volumes_sim_BetaSn[0], volumes_sim_BetaSn[-1], num=number_of_volume_points)
-#
+
 #       cell_dofree ='all' values
 initial_parameters_all_BetaSn = (total_energies_strain_all_BetaSn[mid(total_energies_strain_all_BetaSn)], 1e11, 3.5, volumes_sim_BetaSn[mid(volumes_sim_BetaSn)])
 fit_parameters_all_BetaSn = sp.fmin(square_differences, initial_parameters_all_BetaSn, args=(volumes_sim_BetaSn, total_energies_strain_all_BetaSn, murnaghan), maxiter=100000)
 fit_total_energies_strain_all_BetaSn = murnaghan(fit_parameters_all_BetaSn, volumes_BetaSn)
 # print(fit_parameters_all_BetaSn)
 
-        #cell_dofree ='z' values
+#       cell_dofree ='z' values
 initial_parameters_shape_BetaSn = (total_energies_strain_shape_BetaSn[mid(total_energies_strain_shape_BetaSn)], 1e11, 3.5, volumes_sim_BetaSn[mid(volumes_sim_BetaSn)])
 fit_parameters_shape_BetaSn = sp.fmin(square_differences, initial_parameters_shape_BetaSn, args=(volumes_sim_BetaSn, total_energies_strain_shape_BetaSn, murnaghan), maxiter=100000)
 fit_total_energies_strain_shape_BetaSn = murnaghan(fit_parameters_shape_BetaSn, volumes_BetaSn)
@@ -92,14 +99,14 @@ def transition_volume(a, p):
     v = v0 * np.power((1 + p * (k0prime / k0)), (-1.0 / k0prime))
     return v
 
-div = 100000
-vol_mash = np.concatenate((volumes_sim_diamond,volumes_sim_BetaSn))
-volume = np.linspace(min(vol_mash), max(vol_mash), num=number_of_volume_points)
-pressure = np.linspace(-50*11.7e9 ,50*11.7e9,div)
+
+vol_mash = np.concatenate((volumes_sim_diamond, volumes_sim_BetaSn))
+volume = np.linspace(min(vol_mash), max(vol_mash), num=number_of_enthalpy_samples)
+pressure = np.linspace(-pressure_extreme, pressure_extreme, number_of_enthalpy_samples)
 diamond = enthal_murn(fit_parameters_diamond, pressure)
 beta = enthal_murn(fit_parameters_shape_BetaSn, pressure)
-matches = np.zeros(div)
-index = np.arange(0,div,1)
+matches = np.zeros(number_of_enthalpy_samples)
+index = np.arange(0, number_of_enthalpy_samples, 1)
 
 for x in index:
     add = np.array([diamond[x]/beta[x]])

@@ -4,7 +4,7 @@ from matplotlib.ticker import StrMethodFormatter
 # Determine why transition pressures are wrong
 
 # Parameters
-system = 'slab'
+system = 'bulk'
 # Import correct file
 if system == 'slab':
     from eos_take2 import *
@@ -12,7 +12,7 @@ elif system == 'bulk':
     import matplotlib.pyplot as plt
     from eos_information import *
 # exchange_correlation = 'PBE'          ###CURRENTLY NEED TO CHANGE IN eos_take2.py or eos_information.py
-write_png_file = False                  # Write PNG file if True, open plot window if False
+write_png_file = False                 # Write PNG file if True, open plot window if False
 tangent_line_shift = -7.0e-2            # Shift tangent line by this factor of the vertical axis range
 text_vertical_shift_factor = 5.0e-2     # Shift texts by this factor of the vertical axis range
 text_horizontal_shift_factor = 5.0e-3   # Shift texts by this factor of the horizontal axis range
@@ -28,23 +28,44 @@ if system == 'slab':
     if exchange_correlation == 'PZ':
         diamond_equilibrium_volume_horizontal_shift_factor = 10
         diamond_bulk_modulus_horizontal_shift_factor = 4
+        beta_tin_bulk_modulus_horizontal_shift_factor = 0
         transition_pressure_vertical_shift_factor = 2
         transition_pressure_horizontal_shift_factor = 5
     elif exchange_correlation == 'PBE':
         diamond_equilibrium_volume_horizontal_shift_factor = 1
         diamond_bulk_modulus_horizontal_shift_factor = 4
+        beta_tin_bulk_modulus_horizontal_shift_factor = 0
         transition_pressure_vertical_shift_factor = 2
-        transition_pressure_horizontal_shift_factor = 12
+        transition_pressure_horizontal_shift_factor = 15
     elif exchange_correlation == 'SCAN':
         diamond_equilibrium_volume_horizontal_shift_factor = 1
         diamond_bulk_modulus_horizontal_shift_factor = 6
+        beta_tin_bulk_modulus_horizontal_shift_factor = 0
         transition_pressure_vertical_shift_factor = 2
         transition_pressure_horizontal_shift_factor = 10
 elif system == 'bulk':
-    diamond_equilibrium_volume_horizontal_shift_factor = 10
-    diamond_bulk_modulus_horizontal_shift_factor = 4
-    transition_pressure_vertical_shift_factor = 2
-    transition_pressure_horizontal_shift_factor = 5
+    if exchange_correlation == 'PZ':
+        diamond_equilibrium_volume_horizontal_shift_factor = 10
+        diamond_bulk_modulus_horizontal_shift_factor = 14
+        beta_tin_bulk_modulus_horizontal_shift_factor = 22
+        transition_pressure_vertical_shift_factor = 2
+        transition_pressure_horizontal_shift_factor = 10
+    elif exchange_correlation == 'PBE':
+        diamond_equilibrium_volume_horizontal_shift_factor = 1
+        diamond_bulk_modulus_horizontal_shift_factor = 14
+        beta_tin_bulk_modulus_horizontal_shift_factor = 22
+        transition_pressure_vertical_shift_factor = 1
+        transition_pressure_horizontal_shift_factor = 5
+    elif exchange_correlation == 'SCAN':
+        diamond_equilibrium_volume_horizontal_shift_factor = 10
+        diamond_bulk_modulus_horizontal_shift_factor = 18
+        beta_tin_bulk_modulus_horizontal_shift_factor = 22
+        transition_pressure_vertical_shift_factor = 2
+        transition_pressure_horizontal_shift_factor = 5
+
+#   Volume range
+volume_range = (10.0, 40.0)
+delta_volume = 5
 
 # Use LaTeX
 mpl.rcParams['text.usetex'] = True
@@ -95,23 +116,27 @@ ax.scatter(volumes_sim_BetaSn, total_energies_strain_shape_BetaSn, color=beta_ti
 tangent_line_values = (murnaghan(fit_parameters_shape_BetaSn, tvol_beta)-(volume-tvol_beta)
                        * tpressure) * energy_conversion_factor
 volume = volume/cubic_meters_per_cubic_angstrom
-diamond_minimum_difference_index = np.argmin(np.abs(tangent_line_values-fit_total_energies_strain_diamond))
-beta_tin_minimum_difference_index = np.argmin(np.abs(tangent_line_values-fit_total_energies_strain_shape_BetaSn))
-if beta_tin_minimum_difference_index < diamond_minimum_difference_index:
-    ax.plot(volume[:diamond_minimum_difference_index],
-             tangent_line_values[:diamond_minimum_difference_index] +
-             tangent_line_shift,
-             color=tangent_line_color)
-else:
-    ax.plot(volume[diamond_minimum_difference_index:beta_tin_minimum_difference_index],
-             tangent_line_values[diamond_minimum_difference_index:beta_tin_minimum_difference_index] +
-             tangent_line_shift,
-             color=tangent_line_color)
+# diamond_minimum_difference_index = np.argmin(np.abs(tangent_line_values-fit_total_energies_strain_diamond))
+# beta_tin_minimum_difference_index = np.argmin(np.abs(tangent_line_values-fit_total_energies_strain_shape_BetaSn))
+# if beta_tin_minimum_difference_index < diamond_minimum_difference_index:
+#     ax.plot(volume[:diamond_minimum_difference_index],
+#             tangent_line_values[:diamond_minimum_difference_index] +
+#             tangent_line_shift,
+#             color=tangent_line_color)
+# else:
+#     ax.plot(volume[diamond_minimum_difference_index:beta_tin_minimum_difference_index],
+#             tangent_line_values[diamond_minimum_difference_index:beta_tin_minimum_difference_index] +
+#             tangent_line_shift,
+#             color=tangent_line_color)
+ax.plot(volume,
+        tangent_line_values +
+        tangent_line_shift,
+        color=tangent_line_color)
 
 # Axes properties
 #   Horizontal
-ax.set_xlim(left=10.0, right=40.0)
-ax.set_xticks(np.arange(10, 45, 5))
+ax.set_xlim(left=volume_range[0], right=volume_range[1])
+ax.set_xticks(np.arange(int(volume_range[0]), int(volume_range[1]), delta_volume))
 ax.set_xlabel(r'Volume (\r{A}$^3$/atom)')
 #   Vertical
 ax.set_ylim(bottom=np.amin(total_energies_strain_diamond) - phase_energy_difference,
@@ -155,7 +180,8 @@ diamond_bulk_modulus_coordinates = (diamond_equilibrium_volume +
 beta_tin_equilibrium_volume_coordinates = (beta_tin_equilibrium_volume + text_horizontal_shift,
                                           plot_energy_minimum + text_vertical_shift)
 #        Vertically aligned with average first and last total energy
-beta_tin_bulk_modulus_coordinates = (beta_tin_equilibrium_volume,
+beta_tin_bulk_modulus_coordinates = (beta_tin_equilibrium_volume +
+                                     text_horizontal_shift*beta_tin_bulk_modulus_horizontal_shift_factor,
                                      0.5*(total_energies_strain_shape_BetaSn[0] +
                                           total_energies_strain_shape_BetaSn[-1]))
 #        Aligned with largest total energy
@@ -170,7 +196,7 @@ if t_pres > 0:
     ax.text(transition_pressure_coordinates[0], diamond_equilibrium_volume_coordinates[1] - 0.25 * text_vertical_shift,
              r'$V_0$ = ', color='black')
 else:
-    transition_pressure_coordinates = (volume[diamond_minimum_difference_index] +
+    transition_pressure_coordinates = (beta_tin_equilibrium_volume +
                                        transition_pressure_horizontal_shift_factor*text_horizontal_shift,
                                        total_energies_strain_diamond[-1] -
                                        transition_pressure_vertical_shift_factor*text_vertical_shift)

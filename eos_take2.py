@@ -9,7 +9,8 @@ import matplotlib as mpl
 
 # Parameters
 number_of_volume_points = 100
-exchange_correlation = 'PZ'
+number_of_enthalpy_samples = 100000
+exchange_correlation = 'SCAN'
 chemical_formula = 'Si'
 structure_names = ['$Fd\overline{3}m$', '$I4_{1}/amd$']  # Hermann-Mauguin notation for diamond & beta-Sn structures
 n_atom_diamond = 8
@@ -18,7 +19,7 @@ n_atom_betasn = 4
 # Conversion factors
 cubic_meters_per_cubic_angstrom = 1e-30
 joules_per_Rydberg = 2.1798741e-18
-print(exchange_correlation)
+# print(exchange_correlation)
 # Data
 if exchange_correlation == 'PBE':
     figure_file_name = 'Si.PBE_1ML.EoS.png'
@@ -59,7 +60,6 @@ if exchange_correlation == 'SCAN':
     volumes_sim_BetaSn = cubic_meters_per_cubic_angstrom*np.array([20.20406722585,22.72957562906,24.74998235166,25.00253319197,25.25508403227,25.25508403227,25.50763487263,25.76018571294,27.78059243554,30.30610083875,32.83160924196])
     total_energies_strain_BetaSn = (joules_per_Rydberg/n_atom_betasn)*np.array([-31.06535235,-31.08317680,-31.09456583,-31.09493016,-31.09515189,-31.09515189,-31.09511682,-31.09486093,-31.08511596,-31.05350619,-31.00657811])
 
-print(total_energies_strain_diamond)
 def mid(x):
     return int((len(x)-1)/2)
 
@@ -73,7 +73,6 @@ def murnaghan(p, v):
     return (p[0] + (p[1]*p[3]*(((1.0/(p[2]*kk))*np.power((v/p[3]), (-kk)))+(v/(p[2]*p[3]))-(1.0/kk))))
 
 
-
 # Murnaghan Equation of State Information
 #           parameters = (E0, K0, K0', V0)
 
@@ -82,7 +81,6 @@ initial_parameters_diamond = (total_energies_strain_diamond[mid(total_energies_s
 fit_parameters_diamond = sp.fmin(square_differences, initial_parameters_diamond, args=(volumes_sim_diamond, total_energies_strain_diamond, murnaghan), maxiter=100000)
 volumes_diamond = np.linspace(volumes_sim_diamond[0], volumes_sim_diamond[-1], num=number_of_volume_points)
 fit_total_energies_strain_diamond = murnaghan(fit_parameters_diamond, volumes_diamond)
-
 
 #     Beta-Sn structure calculations
 volumes_BetaSn = np.linspace(volumes_sim_BetaSn[0], volumes_sim_BetaSn[-1], num=number_of_volume_points)
@@ -102,7 +100,7 @@ def enthal_murn(a, p):
     k0 = a[1]
     k0prime = a[2]
     v0 = a[3]
-    if (1+p*(k0prime/k0)).any() > 0 and k0 != 0 and k0prime != 0:
+    if (1+p*(k0prime/k0)).any() > 0 and k0 != 0. and k0prime != 0.:
         v = v0*np.power((1 + p * (k0prime / k0)), (-1.0 / k0prime))
     enthalpy = e0
     enthalpy += (k0 * v0 /(k0prime * (k0prime - 1.0))) * np.power(v/v0, (1 - k0prime))
@@ -128,14 +126,13 @@ def transition_volume(a, p):
     v = v0 * np.power((1 + p * (k0prime / k0)), (-1.0 / k0prime))
     return v
 
-div = 100000
-vol_mash = np.concatenate((volumes_sim_diamond,volumes_sim_BetaSn))
-volume = np.linspace(min(vol_mash), max(vol_mash), num=div)
-pressure = np.linspace(-50*11.7e9 ,50*11.7e9,div)
+vol_mash = np.concatenate((volumes_sim_diamond, volumes_sim_BetaSn))
+volume = np.linspace(min(vol_mash), max(vol_mash), num=number_of_enthalpy_samples)
+pressure = np.linspace(-50*11.7e9, 50*11.7e9, number_of_enthalpy_samples)
 diamond = enthal_murn(fit_parameters_diamond, pressure)
 beta = enthal_murn(fit_parameters_shape_BetaSn, pressure)
-matches = np.zeros(div)
-index = np.arange(0,div,1)
+matches = np.zeros(number_of_enthalpy_samples)
+index = np.arange(0,number_of_enthalpy_samples,1)
 
 for x in index:
     add = np.array([diamond[x]/beta[x]])
@@ -146,7 +143,6 @@ beta = beta[np.logical_not(np.isnan(matches))]
 pressure = pressure[np.logical_not(np.isnan(matches))]
 matches = matches[np.logical_not(np.isnan(matches))]
 near = find_nearest(matches, 1)
-
 
 tpressure = pressure[near[1]]
 tvol_diamond = transition_volume(fit_parameters_diamond, tpressure)
@@ -187,7 +183,7 @@ t_pres = round(1e-9*tpressure, 2)
 #
 #
 # plt.show()
-print(t_pres)
-print(tvol_diamond)
-print(tvol_beta)
-print(vol_0_betasn)
+# print(t_pres)
+# print(tvol_diamond)
+# print(tvol_beta)
+# print(vol_0_betasn)
