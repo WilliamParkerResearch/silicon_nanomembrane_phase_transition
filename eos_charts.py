@@ -1,10 +1,10 @@
 from matplotlib.ticker import StrMethodFormatter
-
+import numpy as np
 # To Do
 # Determine why transition pressures are wrong
 
 # Parameters
-system = 'bulk'
+system = 'slab'
 # Import correct file
 if system == 'slab':
     from eos_take2 import *
@@ -64,7 +64,11 @@ elif system == 'bulk':
         transition_pressure_horizontal_shift_factor = 5
 
 #   Volume range
-volume_range = (10.0, 40.0)
+total_volumes=np.append(volumes_sim_BetaSn,volumes_sim_diamond)
+minvol=int(np.amin(total_volumes)/cubic_meters_per_cubic_angstrom)
+maxvol=int(np.amax(total_volumes)/cubic_meters_per_cubic_angstrom)
+voldisp=(maxvol-minvol)*0.05
+volume_range = (minvol-voldisp, maxvol+voldisp)
 delta_volume = 5
 
 # Use LaTeX
@@ -72,7 +76,7 @@ mpl.rcParams['text.usetex'] = True
 
 # Font settings for presentation slide graphics
 mpl.rcParams['font.serif'] = "Times"
-mpl.rcParams['font.family'] = "serif"
+mpl.rcParams['font.family'] = "Georgia"
 mpl.rcParams['font.size'] = 18
 
 # Set up plot
@@ -139,7 +143,7 @@ ax.set_xlim(left=volume_range[0], right=volume_range[1])
 ax.set_xticks(np.arange(int(volume_range[0]), int(volume_range[1]), delta_volume))
 ax.set_xlabel(r'Volume (\r{A}$^3$/atom)')
 #   Vertical
-ax.set_ylim(bottom=np.amin(total_energies_strain_diamond) - phase_energy_difference,
+ax.set_ylim(bottom=np.amin(total_energies_strain_diamond) - 1.5*phase_energy_difference,
             top=np.amax(total_energies_strain_shape_BetaSn) + 0.5*phase_energy_difference)
 ax.set_yscale(r'linear')
 ax.set_ylabel(r'Total Energy (eV/atom)')

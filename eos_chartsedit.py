@@ -5,14 +5,14 @@ from eos_take2 import *
 # Determine why transition pressures are wrong
 
 # Parameters
-system = 'slab'
+system = 'bulk'
 # Import correct file
 if system == 'slab':
     from eos_take2 import *
 elif system == 'bulk':
     import matplotlib.pyplot as plt
     from eos_information import *
-# exchange_correlation = 'PBE'          ###CURRENTLY NEED TO CHANGE IN eos_take2.py or eos_information.py
+# exchange_correlation = 'SCAN'          ###CURRENTLY NEED TO CHANGE IN eos_take2.py or eos_information.py
 write_png_file = False                 # Write PNG file if True, open plot window if False
 tangent_line_shift = -7.0e-2            # Shift tangent line by this factor of the vertical axis range
 text_vertical_shift_factor = 5.0e-2     # Shift texts by this factor of the vertical axis range
@@ -258,4 +258,4 @@ else:
 
 
 print(tvol_diamond/1e-30)
-print(tvol_beta)
+print(tvol_beta/1e-30)
