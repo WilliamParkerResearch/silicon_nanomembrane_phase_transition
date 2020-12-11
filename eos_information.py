@@ -12,7 +12,8 @@ elif exchange_correlation == 'PBE':
     from QEData import *
     figure_file_name = 'Si.PBE.EoS.png'
 elif exchange_correlation == 'SCAN':
-    from QEData_scan_paper import *
+    from QEData_scan import *
+    # from QEData_scan_paper import *
 
 figure_file_name = 'Si.' + exchange_correlation + '.EoS.png'
 

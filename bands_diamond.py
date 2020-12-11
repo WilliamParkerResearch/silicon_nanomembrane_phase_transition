@@ -4,11 +4,19 @@ from matplotlib.gridspec import GridSpec
 import matplotlib as mpl
 from QEData import *
 
-
-
 # Use TeX fonts
 mpl.rcParams['text.usetex'] = True
 mpl.rcParams['font.sans-serif'] = "cmr10"
+mpl.rcParams['font.family'] = 'serif'
+
+# Plot parameters
+band_color = 'blue'
+dos_curve_color = 'blue'
+dos_fill_color = 'blue'
+dos_opacity = 0.8
+fermi_level_linewidth = 0.5
+fermi_level_linecolor = 'black'
+fermi_level_linestyle = (0, (5, 10))
 
 num_disc = len(disc_points_diamond)
 index_array = np.array([])
@@ -56,7 +64,8 @@ exec(f'max_eigenvalue = np.sort(bands_eigenvalues_diamond_{n_bands_diamond})[-1]
 
 
 fig = plt.figure()
-plt.suptitle(r'$\vec{k}$-point and Density of State Electrical Energy Bands for ' + structure_names[0] + ' ' + chemical_formula)
+# No title for paper
+# plt.suptitle(r'$\vec{k}$-point and Density of State Electrical Energy Bands for ' + structure_names[0] + ' ' + chemical_formula)
 gs = GridSpec(1, len(disc_points_diamond)+1, width_ratios=ratio_array)
 
 for i in range(num_disc):
@@ -73,31 +82,38 @@ for i in range(num_disc):
     for j in range(n_bands_diamond):
         if (i == 0):
             exec(f'ax{i} = fig.add_subplot(gs[{i}])')
-            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_diamond)')
+            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_diamond, color=band_color)')
             exec(f'ax{i}.set_xticks(ticks_diamond[start:end])')
             exec(f'ax{i}.set_xticklabels(ticklabels_diamond[start:end])')
             exec(f'ax{i}.set_xlim([disc_points_diamond[{i}],disc_points_diamond[{i+1}]])')
             exec(f'ax{i}.set_ylim([min_eigenvalue,max_eigenvalue])')
-            exec(f'ax{i}.set_ylabel(r\'Energy (eV)\')')
-            ax0.set_xlabel(r'$\vec{k}$ points')
+            # exec(f'ax{i}.set_ylabel(r\'Energy (eV)\')')
+            # Use mathematical symbol for eigenvalue
+            ax0.set_ylabel(r'$\varepsilon_i(\vec{k})$ (eV)')
+            ax0.set_xlabel(r'$\vec{k}$')
         elif (i == num_disc -1):
             exec(f'ax{i} = fig.add_subplot(gs[{i}], sharey = ax0)')
-            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_diamond)')
+            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_diamond, color=band_color)')
             exec(f'ax{i}.tick_params(labelleft=False)')
             exec(f'ax{i}.set_xticks(ticks_diamond[start:end])')
             exec(f'ax{i}.set_xticklabels(ticklabels_diamond[start:end])')
             exec(f'ax{i}.set_xlim([disc_points_diamond[{i}],kpoint_indexes_diamond[-1]])')
         else:
             exec(f'ax{i} = fig.add_subplot(gs[{i}], sharey = ax0)')
-            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_diamond)')
+            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_diamond, color=band_color)')
             exec(f'ax{i}.tick_params(labelleft=False)')
             exec(f'ax{i}.set_xticks(ticks_diamond[start:end])')
             exec(f'ax{i}.set_xticklabels(ticklabels_diamond[start:end])')
             exec(f'ax{i}.set_xlim([disc_points_diamond[{i}],disc_points_diamond[{i+1}]])')
-        exec(f'ax{i}.axhline(y=0, color=\'r\', linestyle=\'--\', linewidth=0.5)')
+        exec(f'ax{i}.axhline(y=0, color=fermi_level_linecolor, linestyle=fermi_level_linestyle, '
+             f'linewidth=fermi_level_linewidth)')
 ax_last = fig.add_subplot(gs[num_disc], sharey = ax0)
 ax_last.tick_params(labelleft=False)
-ax_last.plot(density_diamond,dos_energies_diamond - fermi_energy_diamond)
-ax_last.set_xlabel(r'Electric Density (E)')
+ax_last.plot(density_diamond, dos_energies_diamond - fermi_energy_diamond, color=dos_curve_color)
+ax_last.fill(density_diamond, dos_energies_diamond - fermi_energy_diamond, color=dos_fill_color, alpha=dos_opacity)
+# ax_last.set_xlabel(r'Electric Density (E)')
+# ax_last.set_xlabel(r'DOS')
+# Try symbolic axis label for DOS
+ax_last.set_xlabel(r'$g(\varepsilon)$')
 plt.subplots_adjust(wspace=0.05)
 plt.show()
