@@ -4,11 +4,14 @@ from matplotlib.gridspec import GridSpec
 import matplotlib as mpl
 from QEData import *
 
+# Get plot parameters
+from format_charts import *
 
+# Decide output form
+save_plot = True
+plot_filename = 'Si.I41amd.PBE.bands.pdf'
+show_plot = False
 
-# Use TeX fonts
-mpl.rcParams['text.usetex'] = True
-mpl.rcParams['font.sans-serif'] = "cmr10"
 
 num_disc = len(disc_points_betasn)
 index_array = np.array([])
@@ -55,7 +58,7 @@ exec(f'max_eigenvalue = np.sort(bands_eigenvalues_betasn_{n_bands_betasn})[-1] -
 
 
 fig = plt.figure()
-fig.suptitle(r'$\vec{k}$-point and Density of State Electrical Energy Bands for ' + structure_names[1] + ' ' + chemical_formula, )
+# fig.suptitle(r'$\vec{k}$-point and Density of State Electrical Energy Bands for ' + structure_names[1] + ' ' + chemical_formula, )
 gs = GridSpec(1, len(disc_points_betasn)+1, width_ratios=ratio_array)
 
 for i in range(num_disc):
@@ -71,31 +74,39 @@ for i in range(num_disc):
     for j in range(n_bands_betasn):
         if (i == 0):
             exec(f'ax{i} = fig.add_subplot(gs[{i}])')
-            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_betasn)')
+            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_betasn, color=band_color)')
             exec(f'ax{i}.set_xticks(ticks_betasn[start:end])')
             exec(f'ax{i}.set_xticklabels(ticklabels_betasn[start:end])')
             exec(f'ax{i}.set_xlim([disc_points_betasn[{i}],disc_points_betasn[{i+1}]])')
             exec(f'ax{i}.set_ylim([min_eigenvalue,max_eigenvalue])')
-            exec(f'ax{i}.set_ylabel(r\'Energy (eV)\')')
-            ax0.set_xlabel(r'$\vec{k}$ points')
+            #exec(f'ax{i}.set_ylabel(r\'Energy (eV)\')')
+            ax0.set_ylabel(r'$\varepsilon_i(\vec{k})$')
+            ax0.set_xlabel(r'$\vec{k}$')
         elif (i == num_disc -1):
             exec(f'ax{i} = fig.add_subplot(gs[{i}], sharey = ax0)')
-            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_betasn)')
+            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_betasn, color=band_color)')
             exec(f'ax{i}.tick_params(labelleft=False)')
             exec(f'ax{i}.set_xticks(ticks_betasn[start:end])')
             exec(f'ax{i}.set_xticklabels(ticklabels_betasn[start:end])')
             exec(f'ax{i}.set_xlim([disc_points_betasn[{i}],kpoint_indexes_betasn[-1]])')
         else:
             exec(f'ax{i} = fig.add_subplot(gs[{i}], sharey = ax0)')
-            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_betasn)')
+            exec(f'ax{i}.plot(karray_{i}, eigenarray_{j+1}_{i} - fermi_energy_betasn, color=band_color)')
             exec(f'ax{i}.tick_params(labelleft=False)')
             exec(f'ax{i}.set_xticks(ticks_betasn[start:end])')
             exec(f'ax{i}.set_xticklabels(ticklabels_betasn[start:end])')
             exec(f'ax{i}.set_xlim([disc_points_betasn[{i}],disc_points_betasn[{i+1}]])')
-        exec(f'ax{i}.axhline(y=0, color=\'r\', linestyle=\'--\', linewidth=0.5)')
+        exec(f'ax{i}.axhline(y=0, color=fermi_level_linecolor, linestyle=fermi_level_linestyle, linewidth=fermi_level_linewidth)')
 ax_last = fig.add_subplot(gs[num_disc], sharey = ax0)
 ax_last.tick_params(labelleft=False)
-ax_last.plot(density_betasn,dos_energies_betasn - fermi_energy_betasn)
-ax_last.set_xlabel(r'Electric Density (E)')
+ax_last.plot(density_betasn,dos_energies_betasn - fermi_energy_betasn, color=dos_curve_color)
+ax_last.fill(density_betasn, dos_energies_betasn - fermi_energy_betasn, color=dos_fill_color, alpha=dos_opacity)
+# ax_last.set_xlabel(r'Electric Density (E)')
+ax_last.set_xlabel(r'$g(\varepsilon)$')
 plt.subplots_adjust(wspace=0.05)
-plt.show()
+
+if save_plot:
+    plt.savefig(plot_filename)
+
+if show_plot:
+    plt.show()

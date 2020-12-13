@@ -15,11 +15,10 @@ elif exchange_correlation == 'SCAN':
     from QEData_scan import *
     # from QEData_scan_paper import *
 
-figure_file_name = 'Si.' + exchange_correlation + '.EoS.png'
-
 # Conversion factors
-cubic_meters_per_cubic_angstrom = 1e-30
-joules_per_Rydberg = 2.1798741e-18
+# from unit_conversions import cubic_meters_per_cubic_angstrom, joules_per_rydberg
+
+figure_file_name = 'Si.' + exchange_correlation + '.EoS.png'
 
 # Use TeX fonts
 mpl.rcParams['text.usetex'] = True
@@ -136,7 +135,7 @@ k_0_prime_betasn = round(fit_parameters_shape_BetaSn[2], 2)
 vol_t_betasn = round(1e30*tvol_beta,2)
 t_pres = round(1e-9*tpressure, 2)
 
-# print(fit_parameters_diamond[0]+46.39167521*joules_per_Rydberg)
+# print(fit_parameters_diamond[0]+46.39167521*joules_per_rydberg)
 print(vol_0_diamond)
 print(vol_t_diamond)
 print(t_pres)

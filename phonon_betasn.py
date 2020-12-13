@@ -1,16 +1,14 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from QEData import *
-import matplotlib as mpl
 
+# Get needed conversion factors
+from unit_conversions import terahertz_per_inverse_centimeter
 
-# Use TeX fonts
-mpl.rcParams['text.usetex'] = True
-mpl.rcParams['font.sans-serif'] = "cmr10"
+# Set plot parameters (includes NumPy import)
+from format_charts import *
 
-icm_to_THz = 0.03
-
+# Structure-specific parameters
 nks_betasn = 71
 nbnd_betasn = 12
 path_kpoint_tik_betasn = [1,11,16,21,31,41,51,61,7,71,72,82,83,93]
@@ -34,21 +32,23 @@ frequency_betasn_12 = np.array([372.1654,372.3485,372.6169,372.2169,370.9738,369
 
 fig = plt.figure()
 gs = GridSpec(1, len(path_kpoint_labels_betasn)+1)
-plt.suptitle(r'$\vec{k}$-point and Density of State Vibrational Frequency Bands for ' + structure_names[1] + ' ' + chemical_formula)
+# plt.suptitle(r'$\vec{k}$-point and Density of State Vibrational Frequency Bands for ' + structure_names[1] + ' ' + chemical_formula)
 
 ax1 = fig.add_subplot(gs[0,0:len(path_kpoint_labels_betasn)])
 for i in range(nbnd_betasn):
-    exec(f'ax1.plot(kpoints_betasn, icm_to_THz* frequency_betasn_{i+1})')
+    exec(f'ax1.plot(kpoints_betasn, terahertz_per_inverse_centimeter* frequency_betasn_{i+1}, color=band_color)')
 ax1.set_xticks(path_kpoint_tik_betasn)
 ax1.set_xticklabels(path_kpoint_labels_betasn)
 # ax1.set_xlim(kpoints_betasn[0],kpoints_betasn[-1])
-ax1.set_ylabel(r'Frequency (THz)')
-ax1.set_xlabel(r'$\vec{k}$ points')
+ax1.set_ylabel(r'$\omega$ (THz)')
+ax1.set_xlabel(r'$\vec{q}$')
 
-ax2 = fig.add_subplot(gs[0,len(path_kpoint_labels_betasn):], sharey = ax1)
-ax2.plot(dos_betasn, icm_to_THz*dos_frequencies_betasn)
+ax2 = fig.add_subplot(gs[0,len(path_kpoint_labels_betasn):], sharey=ax1)
+ax2.plot(dos_betasn, terahertz_per_inverse_centimeter*dos_frequencies_betasn, color=dos_curve_color)
+ax2.fill(dos_betasn, terahertz_per_inverse_centimeter*dos_frequencies_betasn, color=dos_fill_color)
 ax2.tick_params(labelleft=False)
-ax2.set_xlabel(r'Density of State')
+# ax2.set_xlabel(r'Density of State')
+ax2.set_xlabel(r'$g(\omega)$')
 plt.subplots_adjust(wspace=0.25)
 plt.ylim(0, 16)
 

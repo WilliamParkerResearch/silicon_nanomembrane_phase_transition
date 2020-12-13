@@ -1,27 +1,19 @@
 import numpy as np
+from unit_conversions import eV_per_rydberg, meV_per_rydberg, joules_per_rydberg, meters_per_angstrom
 
 #This is the data obtained from quantum esspresso
 #pbe-nl-kjpaw_psl.1.0.0
 
-
-# Unit conversion factors and constants
-eV_per_Rydberg = 13.605693122  # Rydberg constant in eV
-meV_per_eV = 1000
-meV_per_Rydberg = eV_per_Rydberg * meV_per_eV
-joules_per_Rydberg = 2.1798741e-18
-meters_per_Angstrom = 5.29177e-11
-cubic_meters_per_cubic_angstrom = 1e-30
-pascals_per_gigapascal = 1e9
+# SCF cycle convergence threshold
 convergence_threshold = 1     # in Ry = 1 meV
+
 # Simulation details
 chemical_formula = 'Si'
 structure_names = ['$Fd\overline{3}m$', '$I4_{1}/amd$']  # Hermann-Mauguin notation for diamond & beta-Sn structures
 n_atom_diamond = 8
 n_atom_betasn = 4
 
-
-
-#Diamond
+# Diamond
 total_energies_ecut_diamond = np.array([-373.75757335, -373.79925178, -373.81116034, -373.81362426, -373.81415304, -373.81421453, -373.81426238, -373.81430259, -373.81431640])
 cutoff_energies_diamond = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
 total_energies_kpoint_diamond = np.array([-373.73861312, -373.79221221, -373.79925178, -373.80057685, -373.80078906, -373.80084060, -373.80087233, -373.80087849, -373.80085501, -373.80086113, -373.80085031, -373.80084968, -373.80084440, -373.80084086, -373.80084502])
@@ -120,16 +112,16 @@ bands_eigenvalues_betasn_16 = np.array([19.7416,19.7637,19.8442,19.9583,20.0763,
 
 
 # Convert array units
-total_energies_ecut_diamond = meV_per_Rydberg * total_energies_ecut_diamond / n_atom_diamond                # meV / atom
-total_energies_kpoint_diamond = meV_per_Rydberg * total_energies_kpoint_diamond / n_atom_diamond
-total_energies_ecut_BetaSn = meV_per_Rydberg * total_energies_ecut_BetaSn / n_atom_betasn
-total_energies_kpoint_BetaSn = meV_per_Rydberg * total_energies_kpoint_BetaSn / n_atom_betasn
-total_energies_strain_diamond = joules_per_Rydberg * total_energies_strain_diamond / n_atom_diamond         # J / atom
-total_energies_strain_all_BetaSn = joules_per_Rydberg * total_energies_strain_all_BetaSn / n_atom_betasn
-total_energies_strain_shape_BetaSn = joules_per_Rydberg * total_energies_strain_shape_BetaSn/ n_atom_betasn
-cutoff_energies_diamond = eV_per_Rydberg * cutoff_energies_diamond                                          # eV
-cutoff_energies_BetaSn = eV_per_Rydberg * cutoff_energies_BetaSn
-lattice_parameters_diamond = meters_per_Angstrom * lattice_parameters_diamond                               # m
-lattice_parameters_BetaSn = meters_per_Angstrom * lattice_parameters_all_BetaSn
-celldm_1_diamond = meters_per_Angstrom * celldm_1_diamond
-celldm_1_BetaSn = meters_per_Angstrom * celldm_1_BetaSn
+total_energies_ecut_diamond = meV_per_rydberg * total_energies_ecut_diamond / n_atom_diamond                # meV / atom
+total_energies_kpoint_diamond = meV_per_rydberg * total_energies_kpoint_diamond / n_atom_diamond
+total_energies_ecut_BetaSn = meV_per_rydberg * total_energies_ecut_BetaSn / n_atom_betasn
+total_energies_kpoint_BetaSn = meV_per_rydberg * total_energies_kpoint_BetaSn / n_atom_betasn
+total_energies_strain_diamond = joules_per_rydberg * total_energies_strain_diamond / n_atom_diamond         # J / atom
+total_energies_strain_all_BetaSn = joules_per_rydberg * total_energies_strain_all_BetaSn / n_atom_betasn
+total_energies_strain_shape_BetaSn = joules_per_rydberg * total_energies_strain_shape_BetaSn/ n_atom_betasn
+cutoff_energies_diamond = eV_per_rydberg * cutoff_energies_diamond                                          # eV
+cutoff_energies_BetaSn = eV_per_rydberg * cutoff_energies_BetaSn
+lattice_parameters_diamond = meters_per_angstrom * lattice_parameters_diamond                               # m
+lattice_parameters_BetaSn = meters_per_angstrom * lattice_parameters_all_BetaSn
+celldm_1_diamond = meters_per_angstrom * celldm_1_diamond
+celldm_1_BetaSn = meters_per_angstrom * celldm_1_BetaSn

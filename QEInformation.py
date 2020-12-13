@@ -3,10 +3,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from QEData import *
 
+# Unit conversions
+from unit_conversions import cubic_meters_per_cubic_angstrom, pascals_per_gigapascal
 
 # Use TeX fonts
 mpl.rcParams['text.usetex'] = True
 mpl.rcParams['font.sans-serif'] = "cmr10"
+
+
 
 # Simulation details
 chemical_formula = 'Si'
@@ -39,10 +43,6 @@ plot_xlabels = [r"Cutoff Energy (eV)",
                 ]
 
 plot_ylabels = []
-
-# Unit conversions
-cubic_meters_per_cubic_angstrom = 1e-30
-pascals_per_gigapascal = 1e9
 
 
 # Function definitions

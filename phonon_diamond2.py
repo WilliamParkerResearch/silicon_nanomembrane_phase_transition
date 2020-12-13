@@ -2,14 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from QEData import *
-import matplotlib as mpl
 
+# Get plot parameters
+from format_charts import *
 
-# Use TeX fonts
-mpl.rcParams['text.usetex'] = True
-mpl.rcParams['font.sans-serif'] = "cmr10"
+# Decide output form
+save_plot = True
+plot_filename = 'Si.Fd-3m.PBE.phonons.pdf'
+show_plot = False
 
-icm_to_THz = 0.03
+icm_to_THz = 0.0299792458
 
 nks_betasn = 93
 nbnd_betasn = 12
@@ -34,10 +36,9 @@ frequency_betasn_11 = np.array([362.3857,362.2717,361.8871,361.1240,359.8123,354
 frequency_betasn_12 = np.array([362.3857,362.5186,362.6497,362.0627,359.8624,358.0334,355.6698,352.9209,350.0255,347.2488,344.8049,344.6521,344.0554,342.6456,339.9417,335.4989,329.0412,320.5542,310.3587,299.3424,290.1093,303.0243,314.3296,325.6977,337.5704,347.4975,354.9829,359.6996,361.8643,362.3843,362.3857,362.2541,361.8658,361.2400,360.4072,359.4059,358.2795,357.0720,355.8238,354.5673,353.3239,353.2121,352.8654,352.2616,351.3970,350.3180,349.1353,348.0073,347.0939,346.4928,346.1882,345.2518,342.5580,338.4444,333.4449,328.2203,323.3852,319.2319,315.6001,312.1094,308.4553,315.4377,322.4009,329.2589,335.9780,342.3258,347.6927,351.3539,353.0609,353.3844,353.3239,346.1882,345.6780,344.3420,342.9972,342.3622,342.3258,342.3622,342.9972,344.3420,345.6780,346.1882,290.1093,290.4574,291.4779,293.1036,295.2295,297.7163,300.3907,303.0250,305.3838,307.2478,308.4553])
 
 
-
 fig = plt.figure()
 gs = GridSpec(1, len(path_kpoint_labels_betasn)+1)
-plt.suptitle(r'$\vec{k}$-point and Density of State Vibrational Frequency Bands for ' + structure_names[0] + ' ' + chemical_formula)
+# plt.suptitle(r'$\vec{k}$-point and Density of State Vibrational Frequency Bands for ' + structure_names[0] + ' ' + chemical_formula)
 
 ax1 = fig.add_subplot(gs[0,0:len(path_kpoint_labels_betasn)])
 for i in range(nbnd_betasn):
@@ -45,16 +46,22 @@ for i in range(nbnd_betasn):
 ax1.set_xticks(path_kpoint_tik_betasn)
 ax1.set_xticklabels(path_kpoint_labels_betasn)
 ax1.set_xlim(kpoints_betasn[0],kpoints_betasn[-1])
-ax1.set_ylabel(r'Frequency (THz)')
-ax1.set_xlabel(r'$\vec{k}$ points')
+ax1.set_ylabel(r'$\omega$ (THz)')
+ax1.set_xlabel(r'$\vec{q}$')
 ax1.axvline(x=path_kpoint_tik_betasn[boundary_points_index_betasn[0]], color='k',linewidth=0.75)
 ax1.axvline(x=path_kpoint_tik_betasn[boundary_points_index_betasn[0]]+1, color='k',linewidth=0.75)
 
 ax2 = fig.add_subplot(gs[0,len(path_kpoint_labels_betasn):], sharey = ax1)
-ax2.plot(dos_betasn, icm_to_THz*dos_frequencies_betasn)
+ax2.plot(dos_betasn, icm_to_THz*dos_frequencies_betasn, color=dos_curve_color)
+ax2.plot(dos_betasn, icm_to_THz*dos_frequencies_betasn, color=dos_fill_color, alpha=dos_opacity)
 ax2.tick_params(labelleft=False)
-ax2.set_xlabel(r'Density of State')
+# ax2.set_xlabel(r'Density of State')
+ax2.set_xlabel(r'$g(\omega)$')
 plt.subplots_adjust(wspace=0.25)
 plt.ylim(0, 16)
 
-plt.show()
+if save_plot:
+    plt.savefig(plot_filename)
+
+if show_plot:
+    plt.show()

@@ -4,19 +4,15 @@ from matplotlib.gridspec import GridSpec
 import matplotlib as mpl
 from QEData import *
 
-# Use TeX fonts
-mpl.rcParams['text.usetex'] = True
-mpl.rcParams['font.sans-serif'] = "cmr10"
-mpl.rcParams['font.family'] = 'serif'
+# Set plot parameters
+from format_charts import *
 
-# Plot parameters
-band_color = 'blue'
-dos_curve_color = 'blue'
-dos_fill_color = 'blue'
-dos_opacity = 0.8
-fermi_level_linewidth = 0.5
-fermi_level_linecolor = 'black'
-fermi_level_linestyle = (0, (5, 10))
+
+# Decide output form
+save_plot = False
+plot_filename = 'Si.Fd-3m.PBE.bands.pdf'
+show_plot = True
+
 
 num_disc = len(disc_points_diamond)
 index_array = np.array([])
@@ -116,4 +112,9 @@ ax_last.fill(density_diamond, dos_energies_diamond - fermi_energy_diamond, color
 # Try symbolic axis label for DOS
 ax_last.set_xlabel(r'$g(\varepsilon)$')
 plt.subplots_adjust(wspace=0.05)
-plt.show()
+
+if show_plot:
+    plt.show()
+
+if save_plot:
+    plt.savefig(plot_filename)

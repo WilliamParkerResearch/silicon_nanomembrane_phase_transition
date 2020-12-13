@@ -3,6 +3,12 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from QEData import *
 
+# Set plot parameters
+from format_charts import *
+
+
+show_plot = True
+
 icm_to_THz = 0.03
 
 nks_diamond = 62
@@ -103,6 +109,9 @@ for i in range(num_disc):
 ax_last = fig.add_subplot(gs[num_disc], sharey = ax0)
 ax_last.tick_params(labelleft=False)
 ax_last.plot(dos_diamond,dos_frequencies_diamond)
-ax_last.set_xlabel(r'Electric Density (E)')
+# ax_last.set_xlabel(r'Electric Density (E)')
+ax_last.set_xlabel(r'$g(\omega)$')
 plt.subplots_adjust(wspace=0.05)
-plt.show()
+
+if show_plot:
+    plt.show()
