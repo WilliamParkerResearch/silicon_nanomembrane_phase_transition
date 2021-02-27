@@ -1,5 +1,6 @@
 import numpy as np
-from unit_conversions import eV_per_rydberg, meV_per_rydberg, joules_per_rydberg, meters_per_angstrom
+#from unit_conversions import eV_per_rydberg, meV_per_rydberg, joules_per_rydberg, meters_per_angstrom
+from unit_conversions import *
 
 #This is the data obtained from quantum esspresso
 #SCAN

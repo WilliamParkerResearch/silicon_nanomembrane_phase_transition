@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from QEData import *
 
-icm_to_THz = 0.03
+terahertz_per_inverse_centimeter = 0.03
 
 nks_diamond = 62
 nbnd_diamond = 24

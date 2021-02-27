@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from QEData import *
 
 # Unit conversions
-from unit_conversions import cubic_meters_per_cubic_angstrom, pascals_per_gigapascal
+# from unit_conversions import cubic_meters_per_cubic_angstrom, pascals_per_gigapascal
+from unit_conversions import *
 
 # Use TeX fonts
 mpl.rcParams['text.usetex'] = True

@@ -11,7 +11,7 @@ save_plot = True
 plot_filename = 'Si.Fd-3m.PBE.phonons.pdf'
 show_plot = False
 
-icm_to_THz = 0.0299792458
+terahertz_per_inverse_centimeter = 0.0299792458
 
 nks_betasn = 93
 nbnd_betasn = 12
@@ -42,7 +42,7 @@ gs = GridSpec(1, len(path_kpoint_labels_betasn)+1)
 
 ax1 = fig.add_subplot(gs[0,0:len(path_kpoint_labels_betasn)])
 for i in range(nbnd_betasn):
-    exec(f'ax1.plot(kpoints_betasn, icm_to_THz* frequency_betasn_{i+1})')
+    exec(f'ax1.plot(kpoints_betasn, terahertz_per_inverse_centimeter* frequency_betasn_{i+1})')
 ax1.set_xticks(path_kpoint_tik_betasn)
 ax1.set_xticklabels(path_kpoint_labels_betasn)
 ax1.set_xlim(kpoints_betasn[0],kpoints_betasn[-1])
@@ -52,8 +52,8 @@ ax1.axvline(x=path_kpoint_tik_betasn[boundary_points_index_betasn[0]], color='k'
 ax1.axvline(x=path_kpoint_tik_betasn[boundary_points_index_betasn[0]]+1, color='k',linewidth=0.75)
 
 ax2 = fig.add_subplot(gs[0,len(path_kpoint_labels_betasn):], sharey = ax1)
-ax2.plot(dos_betasn, icm_to_THz*dos_frequencies_betasn, color=dos_curve_color)
-ax2.plot(dos_betasn, icm_to_THz*dos_frequencies_betasn, color=dos_fill_color, alpha=dos_opacity)
+ax2.plot(dos_betasn, terahertz_per_inverse_centimeter*dos_frequencies_betasn, color=dos_curve_color)
+ax2.plot(dos_betasn, terahertz_per_inverse_centimeter*dos_frequencies_betasn, color=dos_fill_color, alpha=dos_opacity)
 ax2.tick_params(labelleft=False)
 # ax2.set_xlabel(r'Density of State')
 ax2.set_xlabel(r'$g(\omega)$')

@@ -1,4 +1,5 @@
 import numpy as np
+from unit_conversions import *
 
 # This is the data obtained from quantum esspresso
 # pz-n-rrkjus_psl.0.1
@@ -7,8 +8,8 @@ n_atom_diamond = 8
 n_atom_betasn = 4
 
 # Diamond
-joules_per_rydberg = 2.1798741e-18
-cubic_meters_per_cubic_angstrom = 1e-30
+#joules_per_rydberg = 2.1798741e-18
+#cubic_meters_per_cubic_angstrom = 1e-30
 
 total_energies_ecut_diamond = np.array([-90.99873344, -91.06316669, -91.06946699, -91.07005680, -91.07012621, -91.07020444, -91.07022241, -91.07024270, -91.07025222])
 cutoff_energies_diamond = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])

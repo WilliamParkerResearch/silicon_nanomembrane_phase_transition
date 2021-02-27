@@ -13,7 +13,8 @@ from unit_conversions import cubic_meters_per_cubic_angstrom, joules_per_rydberg
 # Parameters
 number_of_volume_points = 100
 number_of_enthalpy_samples = 10000
-exchange_correlation = 'PBE'
+# exchange_correlation = 'PBE'
+exchange_correlation = 'SCAN'
 chemical_formula = 'Si'
 structure_names = ['$Fd\overline{3}m$', '$I4_{1}/amd$']  # Hermann-Mauguin notation for diamond & beta-Sn structures
 n_atom_diamond = 40

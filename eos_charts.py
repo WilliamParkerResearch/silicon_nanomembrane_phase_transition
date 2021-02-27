@@ -13,7 +13,7 @@ elif system == 'bulk':
     from eos_information import *
 # exchange_correlation = 'PBE'          ###CURRENTLY NEED TO CHANGE IN eos_take2.py or eos_information.py
 write_png_file = False                 # Write PNG file if True, open plot window if False
-tangent_line_shift = -7.0e-2            # Shift tangent line by this factor of the vertical axis range
+tangent_line_shift = 0.0  # -7.0e-2            # Shift tangent line by this factor of the vertical axis range
 text_vertical_shift_factor = 5.0e-2     # Shift texts by this factor of the vertical axis range
 text_horizontal_shift_factor = 5.0e-3   # Shift texts by this factor of the horizontal axis range
 #   Color choices
