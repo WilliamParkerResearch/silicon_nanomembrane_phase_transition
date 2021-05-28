@@ -61,3 +61,15 @@ def vinet(parameters, volumes):
                  np.exp(-1.5 * k0pm1 * (reduced_volume_lengths - 1.)))
 
     return vinet_eos
+
+
+def pressure_from_energy_equation_of_state(parameters, volumes, eos='birch-murnaghan'):
+    if eos == 'birch-murnaghan':
+        reduced_volumes = parameters[3] / volumes
+        pressures = 3 * parameters[1] / 2 * \
+                    np.power(reduced_volumes, 7 / 3) - np.power(reduced_volumes, 5 / 3) * \
+                    (1. + (3 / 4) * (parameters[2] - 4.) * (np.power(reduced_volumes, 2 / 3) - 1.))
+        return pressures
+    else:
+        print(f'No P(V) implemented yet for {eos}')
+        return
