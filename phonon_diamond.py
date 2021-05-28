@@ -1,13 +1,14 @@
-# Currently broken
-#
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-from QEData import *   # includes NumPy
+from QEData import *
 
 # Set plot parameters
-from format_charts import *
+
 
 show_plot = True
+
+icm_to_THz = 0.03
 
 nks_diamond = 62
 nbnd_diamond = 24
@@ -67,7 +68,7 @@ ratio_array = np.append(ratio_array,1)
 
 
 fig = plt.figure()
-# plt.suptitle(r'$\vec{k}$-point and Density of State Vibrational Frequency Bands for ' + structure_names[0] + ' ' + chemical_formula)
+plt.suptitle(r'$\vec{k}$-point and Density of State Vibrational Frequency Bands for ' + structure_names[0] + ' ' + chemical_formula)
 gs = GridSpec(1, len(disc_points_array), width_ratios=ratio_array)
 
 for i in range(num_disc):
@@ -84,29 +85,29 @@ for i in range(num_disc):
     for j in range(nbnd_diamond):
         if (i == 0):
             exec(f'ax{i} = fig.add_subplot(gs[{i}])')
-            exec(f'ax{i}.plot(karray_{i}, freqarray_{j+1}_{i}, color=band_color)')
+            exec(f'ax{i}.plot(karray_{i}, freqarray_{j+1}_{i} )')
             exec(f'ax{i}.set_xticks(path_kpoint_tik_diamond[start:end])')
             exec(f'ax{i}.set_xticklabels(path_kpoint_labels_diamond[start:end])')
             exec(f'ax{i}.set_xlim([path_kpoint_tik_diamond[start],path_kpoint_tik_diamond[end]])')
-            exec(f'ax{i}.set_ylabel(r\'$\omega$_i (THz)\')')
-            ax0.set_xlabel(r'$\vec{q}$')
+            exec(f'ax{i}.set_ylabel(r\'Energy (eV)\')')
+            ax0.set_xlabel(r'$\vec{k}$ points')
         elif (i == num_disc -1):
             exec(f'ax{i} = fig.add_subplot(gs[{i}], sharey = ax0)')
-            exec(f'ax{i}.plot(karray_{i}, freqarray_{j+1}_{i}, color=band_color)')
+            exec(f'ax{i}.plot(karray_{i}, freqarray_{j+1}_{i} )')
             exec(f'ax{i}.tick_params(labelleft=False)')
             exec(f'ax{i}.set_xticks(path_kpoint_tik_diamond[start:end])')
             exec(f'ax{i}.set_xticklabels(path_kpoint_labels_diamond[start:end])')
             exec(f'ax{i}.set_xlim([path_kpoint_tik_diamond[start], kpoints_diamond[-1]])')
         else:
             exec(f'ax{i} = fig.add_subplot(gs[{i}], sharey = ax0)')
-            exec(f'ax{i}.plot(karray_{i}, freqarray_{j+1}_{i}, color=band_color)')
+            exec(f'ax{i}.plot(karray_{i}, freqarray_{j+1}_{i} )')
             exec(f'ax{i}.tick_params(labelleft=False)')
             exec(f'ax{i}.set_xticks(path_kpoint_tik_diamond[start:end])')
             exec(f'ax{i}.set_xticklabels(path_kpoint_labels_diamond[start:end])')
             exec(f'ax{i}.set_xlim([disc_points_array[{i}],disc_points_array[{i+1}]])')
 ax_last = fig.add_subplot(gs[num_disc], sharey = ax0)
 ax_last.tick_params(labelleft=False)
-ax_last.plot(dos_diamond, dos_frequencies_diamond, color=dos_curve_color)
+ax_last.plot(dos_diamond,dos_frequencies_diamond)
 # ax_last.set_xlabel(r'Electric Density (E)')
 ax_last.set_xlabel(r'$g(\omega)$')
 plt.subplots_adjust(wspace=0.05)

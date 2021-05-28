@@ -1,30 +1,12 @@
-from scipy import constants
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-import numpy as np
+from QEData import *
 
 # Get needed conversion factors
-# from unit_conversions import terahertz_per_inverse_centimeter
-terahertz_per_inverse_centimeter = constants.value(u'inverse meter-hertz relationship')*(10**-12)/(10**-2)
+from ReferenceFiles.unit_conversions import terahertz_per_inverse_centimeter
 
 # Set plot parameters (includes NumPy import)
-# from format_charts import *
-# Use TeX fonts
-mpl.rcParams['text.usetex'] = True
-mpl.rcParams['font.sans-serif'] = "cmr10"
-mpl.rcParams['font.family'] = 'serif'
-
-# Bands plot parameters
-all_colors = 'blue'
-band_color = all_colors
-dos_curve_color = all_colors
-dos_fill_color = all_colors
-
-dos_opacity = 0.8
-fermi_level_linewidth = 0.5
-fermi_level_linecolor = 'black'
-fermi_level_linestyle = (0, (5, 10))
+from ReferenceFiles.format_charts import *
 
 # Structure-specific parameters
 nks_betasn = 71
@@ -48,7 +30,6 @@ frequency_betasn_11 = np.array([372.1654,372.1720,372.1148,371.7948,370.1513,365
 frequency_betasn_12 = np.array([372.1654,372.3485,372.6169,372.2169,370.9738,369.4751,367.2654,364.4859,361.4225,358.4221,355.7887,355.7398,355.4184,354.3570,351.9251,347.5465,340.8563,331.8099,320.7553,308.6567,298.4069,312.7252,325.1811,336.5722,349.0003,359.1132,366.4110,370.6663,372.2711,372.3379,372.1654,372.0562,371.7329,371.2081,370.5019,369.6399,368.6514,367.5665,366.4134,365.2161,363.9920,363.9242,363.7048,363.2968,362.6734,361.8498,360.9012,359.9510,359.1308,358.5241,358.1228,357.1847,354.4809,350.3356,345.2592,339.8834,334.8067,330.3487,326.4127,322.6600,318.8092,326.1932,333.5867,340.8481,347.8524,354.2991,359.5550,362.9186,364.2254,364.1953,363.9920])
 
 
-
 fig = plt.figure()
 gs = GridSpec(1, len(path_kpoint_labels_betasn)+1)
 # plt.suptitle(r'$\vec{k}$-point and Density of State Vibrational Frequency Bands for ' + structure_names[1] + ' ' + chemical_formula)
@@ -57,8 +38,8 @@ ax1 = fig.add_subplot(gs[0,0:len(path_kpoint_labels_betasn)])
 for i in range(nbnd_betasn):
     exec(f'ax1.plot(kpoints_betasn, terahertz_per_inverse_centimeter* frequency_betasn_{i+1}, color=band_color)')
 ax1.set_xticks(path_kpoint_tik_betasn)
-ax1.set_xticklabels(path_kpoint_labels_betasn + ['', ''])
-ax1.set_xlim(kpoints_betasn[0], kpoints_betasn[-1])
+ax1.set_xticklabels(path_kpoint_labels_betasn)
+# ax1.set_xlim(kpoints_betasn[0],kpoints_betasn[-1])
 ax1.set_ylabel(r'$\omega$ (THz)')
 ax1.set_xlabel(r'$\vec{q}$')
 

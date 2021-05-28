@@ -1,1 +1,0 @@
-from EOSInformation import *
