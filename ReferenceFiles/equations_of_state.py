@@ -15,7 +15,7 @@ def murnaghan(parameters, volumes):
     :param volumes: NumPy array of volumes per atom
     :return: NumPy array of Murnaghan equation of state values at input volumes
     """
-    k0pm1 = p[2] - 1.0  # K_0' - 1
+    k0pm1 = parameters[2] - 1.0  # K_0' - 1
     return parameters[0] + (parameters[1] * parameters[3] *
                             (((1.0 / (parameters[2] * k0pm1)) * np.power((volumes / parameters[3]), (-k0pm1))) +
                              (volumes / (parameters[2] * parameters[3])) - (1.0 / k0pm1)))
@@ -82,5 +82,5 @@ def pressure_from_energy_equation_of_state(parameters, volumes, eos='birch-murna
                     np.exp((3./2) * (parameters[2] - 1.) * (1. - reduced_volume_lengths))
         return pressures
     else:
-        print(f'No P(V) implemented yet for {eos}')
+        print('No P(V) implemented yet for {}'.format(eos))
         return

@@ -37,5 +37,8 @@ celldm_1_diamond = meters_per_angstrom * celldm_1_diamond
 celldm_1_betasn = meters_per_angstrom * celldm_1_betasn
 volumes_sim_diamond = celldm_3_diamond*(np.power(lattice_parameters_diamond,3))/n_atom
 volumes_sim_betasn = celldm_3_betasn*(np.power(lattice_parameters_betasn,3))/(n_atom/2)
-print(volumes_sim_betasn)
-print(volumes_sim_diamond)
+
+
+if __name__ == '__main__':
+    print(volumes_sim_betasn)
+    print(volumes_sim_diamond)
