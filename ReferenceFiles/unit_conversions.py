@@ -12,6 +12,7 @@ joules_per_rydberg = 2.1798741e-18
 eV_per_rydberg = 13.605693122
 meV_per_eV = 1000
 meV_per_rydberg = eV_per_rydberg * meV_per_eV
+eV_per_joule = eV_per_rydberg / joules_per_rydberg
 
 # Frequency
 terahertz_per_inverse_centimeter = 0.0299792458
