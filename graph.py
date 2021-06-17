@@ -14,10 +14,10 @@ def graph_data(data):
         ax[0].plot(volumes,
                  energies,
                  marker='o', linestyle='')
-
-    # Fit E(V)
     ax[0].set_xlabel(r'$V$ (Å$^3$/atom)')
     ax[0].set_ylabel(r'$E$ (eV/atom)')
+
+    # Fit E(V)
 
     # P(V)
     ax[1].set_xlabel(r'$V$ (Å$^3$/atom)')
@@ -28,6 +28,7 @@ def graph_data(data):
     ax[2].set_ylabel(r'$H$ (eV/atom)')
 
     plt.tight_layout()
-    plt.savefig('test.png')
+    #plt.savefig('test.png')
+    plt.show()
 
     return
