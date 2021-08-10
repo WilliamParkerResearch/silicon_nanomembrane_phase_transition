@@ -16,9 +16,9 @@ def pair_distribution(distances, radial_distributions, mass_density):
     return pdf * constants.angstrom**3
 
 
-def radial_distribution(distances, number_of_atoms, delta_width=0.05,
-                        minimum_distance=0., maximum_distance=0.,
-                        number_of_points=1000, verbose=False):
+def radial_distribution(distances, number_of_atoms,
+                        delta_width=0.05, minimum_distance=0., maximum_distance=0., number_of_points=1000,
+                        verbose=False):
     """
               G(r)     = (1/N) sum_ij gaussian(r - |R_i - R_j|) [units = angstrom^-1]
               N        = number of atoms
@@ -29,22 +29,25 @@ def radial_distribution(distances, number_of_atoms, delta_width=0.05,
         print('Calculating radial distribution...')
 
     if minimum_distance == 0. and maximum_distance == 0.:
-        distance_values = np.linspace(np.amin(distances),
-                                np.amax(distances), num=number_of_points)
+        distance_values = np.linspace(np.amin(distances), np.amax(distances), num=number_of_points)
     else:
         distance_values = np.linspace(minimum_distance, maximum_distance, num=number_of_points)
     if verbose:
-        print('Separation range = [{}, {}]'.format(np.amin(distance_values), np.amax(distance_values)))
+        print('\tSeparation values array shape = {}'.format(distance_values.shape))
+        print('\tSeparation range = [{}, {}]'.format(np.amin(distance_values), np.amax(distance_values)))
 
     rdf = np.zeros(len(distance_values))
     for distance in distances:
-        gaussian_values = gaussian(distance_values, mean=distance, width=delta_width)  
+        if verbose:
+            print('For interatomic distance {}:'.format(distance))
+        gaussian_values = gaussian(distance_values, mean=distance, width=delta_width)
         if np.amax(gaussian_values) < gaussian_value_threshold:
             gaussian_maximum = 1.
         else:
             gaussian_maximum = np.amax(gaussian_values)
-        # if verbose:
-        #    print('Gaussian scale = {}'.format(gaussian_maximum))
+        if verbose:
+            print('\tGaussian scale = {}'.format(gaussian_maximum))
+            print('\tGaussian values dimensions = {}'.format(gaussian_values.shape))
         rdf = rdf + gaussian_values / gaussian_maximum
 
     rdf = rdf / number_of_atoms
@@ -75,11 +78,17 @@ def calculate_distance(position_one, position_two):
     return distance
 
 
-def plot_pdf(positions, mass_density, minimum_distance=0.05, maximum_distance=0.05, show_plot=True, filename='pdf.png', verbose=False):
-    distances = interatomic_distances(atomic_positions)
-    radial_distribution_values, distance_values = radial_distribution(distances, len(atomic_positions),
+def plot_pdf(positions, mass_density,
+             minimum_distance=0.05, maximum_distance=0.05, show_plot=True, filename='pdf.png', verbose=False, label=''):
+    distances = interatomic_distances(positions)
+    if verbose:
+        print('Interatomic distances range = [{}, {}]'.format(np.amin(distances), np.amax(distances)))
+        print('Interatomic distances array shape = {}'.format(distances.shape))
+        print('Number of atoms to calculate = {}'.format(len(positions)))
+    radial_distribution_values, distance_values = radial_distribution(distances, len(positions),
                                                                       minimum_distance=minimum_distance,
-                                                                      maximum_distance=maximum_distance, verbose=verbose)
+                                                                      maximum_distance=maximum_distance,
+                                                                      verbose=verbose)
     pair_distribution_values = pair_distribution(distance_values, radial_distribution_values, mass_density)
     import matplotlib.pyplot as plt
     # plt.plot(distance_values, radial_distribution_values)
@@ -87,11 +96,15 @@ def plot_pdf(positions, mass_density, minimum_distance=0.05, maximum_distance=0.
     plt.xlabel(r'$r ({\rm \AA})$')
     plt.ylabel(r'$g(r) $')
     plt.xlim([minimum_distance, maximum_distance])
+    text_x = minimum_distance + (maximum_distance - minimum_distance) * 0.05
+    text_y = 0.9 * np.amax(pair_distribution_values)
+    plt.text(text_x, text_y, label)
 
     if show_plot:
         plt.show()
     else:
         plt.savefig(filename)
+        plt.close()
     return
 
 
