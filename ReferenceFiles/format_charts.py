@@ -8,6 +8,8 @@ mpl.rcParams['font.family'] = 'serif'
 # Bands plot parameters
 all_colors = 'red'
 band_color = all_colors
+rgbcode_diamond = (60 / 255, 80 / 255, 155 / 255)
+rgbcode_betasn = (156 / 255, 61 / 255, 61 / 255)
 
 dos_curve_color = all_colors
 dos_fill_color = all_colors

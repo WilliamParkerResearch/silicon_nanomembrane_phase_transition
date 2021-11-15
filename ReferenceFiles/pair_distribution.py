@@ -17,7 +17,7 @@ def pair_distribution(distances, radial_distributions, mass_density):
 
 
 def radial_distribution(distances, number_of_atoms,
-                        delta_width=0.05, minimum_distance=0., maximum_distance=0., number_of_points=1000,
+                        delta_width=0.005, minimum_distance=0., maximum_distance=0., number_of_points=10000,
                         verbose=False):
     """
               G(r)     = (1/N) sum_ij gaussian(r - |R_i - R_j|) [units = angstrom^-1]
@@ -78,9 +78,10 @@ def calculate_distance(position_one, position_two):
     return distance
 
 
-def plot_pdf(positions, mass_density,
-             minimum_distance=0.05, maximum_distance=0.05, show_plot=True, filename='pdf.png', verbose=False, label=''):
+def plot_pdf(positions, mass_density,minimum_distance=0.05, maximum_distance=0.05, verbose=False,color='grey',linestyle='dashed',linewidth=1,dashes=(3,2)):
     distances = interatomic_distances(positions)
+    # distances = distances[(distances >= minimum_distance) & (distances <= maximum_distance)]
+
     if verbose:
         print('Interatomic distances range = [{}, {}]'.format(np.amin(distances), np.amax(distances)))
         print('Interatomic distances array shape = {}'.format(distances.shape))
@@ -91,8 +92,31 @@ def plot_pdf(positions, mass_density,
                                                                       verbose=verbose)
     pair_distribution_values = pair_distribution(distance_values, radial_distribution_values, mass_density)
     import matplotlib.pyplot as plt
-    # plt.plot(distance_values, radial_distribution_values)
-    plt.plot(distance_values, pair_distribution_values)
+    if linestyle == 'dashed' or linestyle == '--':
+        plt.plot(distance_values, pair_distribution_values,color=color,linestyle=linestyle,linewidth=linewidth,dashes=dashes)
+    else:
+        plt.plot(distance_values, pair_distribution_values,color=color,linestyle=linestyle,linewidth=linewidth)
+
+    return
+
+
+def plot_pdf_formating(positions, mass_density,minimum_distance=0.05, maximum_distance=0.05, show_plot=True, verbose=False, filename='pdf.png', label=''):
+    distances = interatomic_distances(positions)
+    # distances = distances[(distances >= minimum_distance) & (distances <= maximum_distance)]
+
+    # if verbose:
+    #     print('Interatomic distances range = [{}, {}]'.format(np.amin(distances), np.amax(distances)))
+    #     print('Interatomic distances array shape = {}'.format(distances.shape))
+    #     print('Number of atoms to calculate = {}'.format(len(positions)))
+
+    radial_distribution_values, distance_values = radial_distribution(distances, len(positions),
+                                                                      minimum_distance=minimum_distance,
+                                                                      maximum_distance=maximum_distance,
+                                                                      verbose=verbose)
+    pair_distribution_values = pair_distribution(distance_values, radial_distribution_values, mass_density)
+
+
+    import matplotlib.pyplot as plt
     plt.xlabel(r'$r ({\rm \AA})$')
     plt.ylabel(r'$g(r) $')
     plt.xlim([minimum_distance, maximum_distance])
@@ -127,29 +151,22 @@ def parse_command_line_arguments():
     return arguments.o, arguments.verbose, arguments.save_plot, arguments.maximum_distance, arguments.density
 
 
-if __name__ == '__main__':
-    from process_quantum_espresso_outputs import get_celldm, get_positions
+def multislab_builder(positions,lx=3,ly=3):
+    one_xarray = np.ones((len(positions),len(positions[0])))
+    one_xarray[0:,1:]=0
+    tmp_xarray = 1*positions
+    empty_array = np.empty((0,3))
+    empty_array=np.append(empty_array,tmp_xarray,axis=0)
 
-    output_file, verbose, save_plot, maximum_distance, density = parse_command_line_arguments()
+    for i in np.arange(1,lx+1):
+        tmp_xarray=tmp_xarray+one_xarray
+        empty_array=np.append(empty_array,tmp_xarray,axis=0)
 
-    lattice_parameter = get_celldm(output_file, verbose=verbose)
+    one_yarray = np.ones((len(empty_array),len(empty_array[0])))
+    one_yarray[0:,(0,-1)]=0
+    tmp_yarray = 1*empty_array
 
-    if maximum_distance <= 0.05:
-        maximum_distance = np.ceil(lattice_parameter)
-
-    if verbose:
-        print('Maximum distance to plot g(r) = {} angstroms'.format(maximum_distance))
-
-    atomic_positions = lattice_parameter * get_positions(output_file, verbose=verbose)
-    # Diamond-phase
-    # density = 2300  # kg / m^3  (Si)   should = 8 * 28.8 * (kg / amu) / 5.431**3
-    # Beta-tin phase
-    # density = 3370  # kg /m^3                 = 4 * 28.8 * (kg / amu) / (4.686**2 * 2.585)
-
-    if save_plot:
-        plot_pdf(atomic_positions, density,
-                 minimum_distance=0.05, maximum_distance=maximum_distance, show_plot=False, verbose=verbose)
-    else:
-        plot_pdf(atomic_positions, density,
-                 minimum_distance=0.05, maximum_distance=maximum_distance, show_plot=True, verbose=verbose)
-
+    for i in np.arange(1,ly+1):
+        tmp_yarray=tmp_yarray+one_yarray
+        empty_array=np.append(empty_array,tmp_yarray,axis=0)
+    return empty_array
