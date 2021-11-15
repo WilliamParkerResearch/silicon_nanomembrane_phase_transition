@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-from BData_1L import *
+from DataFolder.PBE.Data_0L import *
 
 # Set plot parameters
 from ReferenceFiles.format_charts import *

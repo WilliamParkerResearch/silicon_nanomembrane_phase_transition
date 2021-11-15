@@ -1,0 +1,166 @@
+
+     Program PWSCF v.6.4.1 starts on 10Sep2021 at  0:47:54 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on    60 processors
+
+     MPI processes distributed on    15 nodes
+     K-points division:     npool     =      15
+     R & G space division:  proc/nbgrp/npool/nimage =       4
+     Reading input from Si.I4_1amd_6ML.scf.in
+
+     Current dimensions of program PWSCF are:
+     Max number of different atomic species (ntypx) = 10
+     Max number of k-points (npk) =  40000
+     Max angular momentum in pseudopotentials (lmaxx) =  3
+               file Si.pbe-nl-kjpaw_psl.1.0.0.UPF: wavefunction(s)  3S 3P renormalized
+
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     a serial algorithm will be used
+
+ 
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min         284     284     85                70308    70308   11217
+     Max         285     285     86                70333    70333   11228
+     Sum        1137    1137    341               281265   281265   44893
+ 
+
+     Title: 
+     Relaxation of atomic positions for single monolayer slab of Si using PBE   
+
+
+     bravais-lattice index     =            0
+     lattice parameter (alat)  =       9.0599  a.u.
+     unit-cell volume          =    7198.6246 (a.u.)^3
+     number of atoms/cell      =           48
+     number of atomic types    =            1
+     number of electrons       =       192.00
+     number of Kohn-Sham states=          144
+     kinetic-energy cutoff     =      45.0000  Ry
+     charge density cutoff     =     175.0000  Ry
+     convergence threshold     =      1.0E-08
+     mixing beta               =       0.5000
+     number of iterations used =            8  local-TF  mixing
+     Exchange-correlation      = SLA PW PBX PBC ( 1  4  3  4 0 0)
+
+     celldm(1)=   9.059928  celldm(2)=   0.000000  celldm(3)=   0.000000
+     celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
+
+     crystal axes: (cart. coord. in units of alat)
+               a(1) = (   1.000000   0.000000   0.000000 )  
+               a(2) = (   0.000000   1.000000   0.000000 )  
+               a(3) = (   0.000000   0.000000   9.680000 )  
+
+     reciprocal axes: (cart. coord. in units 2 pi/alat)
+               b(1) = (  1.000000  0.000000  0.000000 )  
+               b(2) = (  0.000000  1.000000  0.000000 )  
+               b(3) = (  0.000000  0.000000  0.103306 )  
+
+
+     PseudoPot. # 1 for Si read from file:
+     /share/pseudo/Si.pbe-nl-kjpaw_psl.1.0.0.UPF
+     MD5 check sum: 3686bff6734aab787fb18a3c8374d51f
+     Pseudo is Projector augmented-wave + core cor, Zval =  4.0
+     Generated using "atomic" code by A. Dal Corso v.6.3
+     Shape of augmentation charge: PSQ
+     Using radial grid of 1141 points,  4 beta functions with: 
+                l(1) =   0
+                l(2) =   0
+                l(3) =   1
+                l(4) =   1
+     Q(r) pseudized with 0 coefficients 
+
+
+     atomic species   valence    mass     pseudopotential
+        Si             4.00    28.08600     Si( 1.00)
+
+     No symmetry found
+
+
+
+   Cartesian axes
+
+     site n.     atom                  positions (alat units)
+         1           Si  tau(   1) = (  -0.1476538   0.0000111   1.5613181  )
+         2           Si  tau(   2) = (   0.4836812   0.5000115   1.8076201  )
+         3           Si  tau(   3) = (  -0.0078537   0.5000104   1.6552632  )
+         4           Si  tau(   4) = (   0.4944523   0.0000112   1.9207918  )
+         5           Si  tau(   5) = (   0.0024653   0.0000118   2.0558236  )
+         6           Si  tau(   6) = (   0.5074331   0.5000100   2.3350686  )
+         7           Si  tau(   7) = (   0.0064989   0.5000103   2.1919864  )
+         8           Si  tau(   8) = (   0.5158276   0.0000125   2.4737888  )
+         9           Si  tau(   9) = (   0.0107159   0.0000098   2.6370282  )
+        10           Si  tau(  10) = (   0.5077203   0.5000123   2.9057083  )
+        11           Si  tau(  11) = (   0.0078836   0.5000126   2.7539315  )
+        12           Si  tau(  12) = (   0.5073418   0.0000099   3.0348877  )
+        13           Si  tau(  13) = (   0.0066589   0.0000117   3.1719326  )
+        14           Si  tau(  14) = (   0.5068602   0.5000108   3.4526106  )
+        15           Si  tau(  15) = (   0.0077261   0.5000099   3.3143043  )
+        16           Si  tau(  16) = (   0.5044734   0.0000103   3.5906429  )
+        17           Si  tau(  17) = (   0.0043156   0.0000100   3.7371720  )
+        18           Si  tau(  18) = (   0.5035389   0.5000094   4.0082795  )
+        19           Si  tau(  19) = (   0.0034729   0.5000106   3.8667032  )
+        20           Si  tau(  20) = (   0.5030719   0.0000109   4.1490892  )
+        21           Si  tau(  21) = (   0.0027564   0.0000102   4.2839809  )
+        22           Si  tau(  22) = (   0.5010304   0.5000098   4.5658379  )
+        23           Si  tau(  23) = (   0.0011999   0.5000102   4.4275796  )
+        24           Si  tau(  24) = (   0.5000642   0.0000107   4.7001028  )
+        25           Si  tau(  25) = (   0.0000063   0.0000108   4.8445168  )
+        26           Si  tau(  26) = (   0.4988711   0.5000102   5.1171565  )
+        27           Si  tau(  27) = (  -0.0009598   0.5000097   4.9787469  )
+        28           Si  tau(  28) = (   0.4973056   0.0000102   5.2605956  )
+        29           Si  tau(  29) = (  -0.0030083   0.0000110   5.3955325  )
+        30           Si  tau(  30) = (   0.4965858   0.5000109   5.6779365  )
+        31           Si  tau(  31) = (  -0.0034795   0.5000096   5.5364879  )
+        32           Si  tau(  32) = (   0.4957226   0.0000100   5.8074072  )
+        33           Si  tau(  33) = (  -0.0044385   0.0000106   5.9540573  )
+        34           Si  tau(  34) = (   0.4922964   0.5000099   6.2305240  )
+        35           Si  tau(  35) = (  -0.0068309   0.5000109   6.0920559  )
+        36           Si  tau(  36) = (   0.4933536   0.0000120   6.3727365  )
+        37           Si  tau(  37) = (  -0.0073285   0.0000096   6.5099268  )
+        38           Si  tau(  38) = (   0.4921338   0.5000135   6.7908007  )
+        39           Si  tau(  39) = (  -0.0077022   0.5000128   6.6391236  )
+        40           Si  tau(  40) = (   0.4892821   0.0000092   6.9077069  )
+        41           Si  tau(  41) = (  -0.0158245   0.0000121   7.0709665  )
+        42           Si  tau(  42) = (   0.4934920   0.5000105   7.3527398  )
+        43           Si  tau(  43) = (  -0.0074344   0.5000103   7.2098184  )
+        44           Si  tau(  44) = (   0.4975369   0.0000115   7.4890649  )
+        45           Si  tau(  45) = (   0.0055169   0.0000139   7.6242061  )
+        46           Si  tau(  46) = (   0.5078406   0.5000105   7.8895223  )
+        47           Si  tau(  47) = (   0.0163095   0.5000084   7.7371896  )
+        48           Si  tau(  48) = (   0.6475889   0.0000108   7.9836462  )
+
+     number of k points=   113  gaussian smearing, width (Ry)=  0.0100
+
+     Number of k-points >= 100: set verbosity='high' to print them.
+
+     Dense  grid:   281265 G-vectors     FFT dimensions: (  40,  40, 375)
+
+     Estimated max dynamical RAM per process >     329.78 MB
+
+     Estimated total dynamical RAM >      19.32 GB
+
+     Initial potential from superposition of free atoms
+
+     starting charge  191.97316, renormalised to  192.00000
+
+     negative rho (up, down):  1.586E-04 0.000E+00
+     Starting wfcs are  192 randomized atomic wfcs
+     Checking if some PAW data can be deallocated... 
+
+     total cpu time spent up to now is       24.7 secs
+
+     Self-consistent Calculation
+
+     iteration #  1     ecut=    45.00 Ry     beta= 0.50
+     CG style diagonalization
+     ethr =  1.00E-02,  avg 

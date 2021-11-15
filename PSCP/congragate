@@ -1,0 +1,50 @@
+#!/bin/bash
+
+P=${1:-1}
+home_dir='/share/runs/qe/Si/slabs'
+base_dir=`pwd`
+runfile='midextract'
+phase=''
+category='eos'
+
+#=========pseudopotential mapper===========
+if [[ "$P" == "1" ]];
+then
+	NOP=pbe-nl-kjpaw_psl.1.0.0      
+fi
+
+if [[ "$P" == "2" ]];
+then
+	NOP=SCAN
+fi
+#==========================================
+
+num='7'
+
+for n in `seq 1 1 $num`;
+do	
+	echo "$n"
+
+	outfile="Data_${n}L.py"
+	slab_dir=${n}ML-calculations/$NOP
+	dir=$home_dir/$slab_dir
+	echo "$dir"
+	cp $runfile $dir
+	cd $dir
+	
+	touch $outfile
+	echo "import numpy as np
+from ReferenceFiles.unit_conversions import *" >> $outfile
+	
+	for idx in `echo "diamond betasn"`
+	do
+		mv $outfile $dir/$idx/$category	
+		cp $runfile $dir/$idx/$category
+		cd $dir/$idx/$category
+		pwd
+		./$runfile >> $outfile
+	done
+        cp $outfile $base_dir
+done
+
+cd $base_dir
