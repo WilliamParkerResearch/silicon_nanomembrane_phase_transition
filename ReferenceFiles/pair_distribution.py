@@ -141,7 +141,10 @@ if __name__ == '__main__':
         print('Maximum distance to plot g(r) = {} angstroms'.format(maximum_distance))
 
     atomic_positions = lattice_parameter * get_positions(output_file, verbose=verbose)
+    # Diamond-phase
     # density = 2300  # kg / m^3  (Si)   should = 8 * 28.8 * (kg / amu) / 5.431**3
+    # Beta-tin phase
+    # density = 3370  # kg /m^3                 = 4 * 28.8 * (kg / amu) / (4.686**2 * 2.585)
 
     if save_plot:
         plot_pdf(atomic_positions, density,
