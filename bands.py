@@ -4,12 +4,15 @@ import matplotlib.gridspec as gridspec
 
 exchange_correlation = 'PBE'
 phase = 'diamond'
-N_ML = '2'
+N_ML = '0'
 
 directoryofdata='DataFolder'+'.'+exchange_correlation+'.'+'bands'+'.'+phase+'.'+'Data_Bands_'+N_ML+'L'
 exec(f'from {directoryofdata} import *')
 
-
+if N_ML == '0':
+    nat = 8
+else:
+    nat= float(N_ML)*8
 fig = plt.figure()
 gs = fig.add_gridspec(nrows=1, ncols=5)
 ax1 = fig.add_subplot(gs[0,:4])
@@ -21,9 +24,9 @@ ax1.set_ylim(-5,5)
 ax1.set_xlim(kpoints[0],kpoints[-1])
 ax1.set_ylabel(r'$\varepsilon_{\rm KS}$ (eV)')
 ax2 = fig.add_subplot(gs[0,4:])
-plt.plot(dos,dos_energies-fermi_energy)
-ax2.fill(dos, dos_energies - fermi_energy, color='goldenrod', alpha=0.5)
+plt.plot(dos/nat,dos_energies-fermi_energy)
+ax2.fill(dos/nat, dos_energies - fermi_energy, color='goldenrod', alpha=0.5)
 ax2.set_ylim(-5,5)
-ax2.set_xlim(0,np.amax(dos))
+ax2.set_xlim(0,np.amax(dos/nat))
 ax2.yaxis.tick_right()
 plt.show()

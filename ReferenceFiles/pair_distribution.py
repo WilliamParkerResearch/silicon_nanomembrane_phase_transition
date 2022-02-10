@@ -17,7 +17,7 @@ def pair_distribution(distances, radial_distributions, mass_density):
 
 
 def radial_distribution(distances, number_of_atoms,
-                        delta_width=0.005, minimum_distance=0., maximum_distance=0., number_of_points=10000,
+                        delta_width=0.015, minimum_distance=0., maximum_distance=0., number_of_points=10000,
                         verbose=False):
     """
               G(r)     = (1/N) sum_ij gaussian(r - |R_i - R_j|) [units = angstrom^-1]
@@ -78,24 +78,53 @@ def calculate_distance(position_one, position_two):
     return distance
 
 
-def plot_pdf(positions, mass_density,minimum_distance=0.05, maximum_distance=0.05, verbose=False,color='grey',linestyle='dashed',linewidth=1,dashes=(3,2)):
-    distances = interatomic_distances(positions)
-    # distances = distances[(distances >= minimum_distance) & (distances <= maximum_distance)]
+def ind_atom_distances(n_atom,positions):
+    import numpy as np
 
-    if verbose:
-        print('Interatomic distances range = [{}, {}]'.format(np.amin(distances), np.amax(distances)))
-        print('Interatomic distances array shape = {}'.format(distances.shape))
-        print('Number of atoms to calculate = {}'.format(len(positions)))
+    check_for_array = (isinstance(n_atom, (list, tuple, np.ndarray)))
+    if check_for_array == False:
+        n_atom = np.array([n_atom])
+    zpos = positions[:, int(2)]
+
+    zpos_sort_idxs = np.argsort(zpos)
+
+    positions_sort = positions[zpos_sort_idxs]
+
+    distances = np.array([])
+    for i in n_atom:
+        atom_position = positions_sort[i-1]
+        other_positions = np.delete(positions_sort,(i-1),axis=0)
+
+        for j in other_positions:
+            separation = atom_position - j
+            distance = np.sqrt(np.sum(separation ** 2))
+            distances = np.append(distances,distance)
+
+    return np.sort(distances)
+
+
+
+def format_pdf(positions, mass_density,minimum_distance=0.05, maximum_distance=0.05, individual_atom_histogram=False,n_atoms=1,verbose=False,zorder=1,color='grey',linestyle='dashed',linewidth=1,dashes=(3,2)):
+    if individual_atom_histogram==False:
+        distances = interatomic_distances(positions)
+    else:
+        distances = ind_atom_distances(n_atoms,positions)
+
     radial_distribution_values, distance_values = radial_distribution(distances, len(positions),
                                                                       minimum_distance=minimum_distance,
                                                                       maximum_distance=maximum_distance,
                                                                       verbose=verbose)
     pair_distribution_values = pair_distribution(distance_values, radial_distribution_values, mass_density)
+
+    return distance_values, pair_distribution_values
+
+
+def plot_pdf(distance_values, pair_distribution_values, zorder=1, color='grey', linestyle='dashed', linewidth=1, dashes=(3, 2),label=''):
     import matplotlib.pyplot as plt
     if linestyle == 'dashed' or linestyle == '--':
-        plt.plot(distance_values, pair_distribution_values,color=color,linestyle=linestyle,linewidth=linewidth,dashes=dashes)
+        plt.plot(distance_values, pair_distribution_values,zorder=zorder,color=color,linestyle=linestyle,linewidth=linewidth,dashes=dashes,label=label)
     else:
-        plt.plot(distance_values, pair_distribution_values,color=color,linestyle=linestyle,linewidth=linewidth)
+        plt.plot(distance_values, pair_distribution_values,zorder=zorder,color=color,linestyle=linestyle,linewidth=linewidth,label=label)
 
     return
 
