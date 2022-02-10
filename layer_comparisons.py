@@ -24,7 +24,7 @@ linewidth = universal_linewidth
 
 
 XC = 'PBE'
-fold = 'eosz'
+fold = 'eosztest'
 prd = 1
 prb = prd
 showplot=True
