@@ -1,0 +1,1 @@
+pscp -r user@131.210.62.200:/share/runs/qe/Si/slabs/3ML-calculations/pbe-nl-kjpaw_psl.1.0.0/betasn/bands/*cube ./

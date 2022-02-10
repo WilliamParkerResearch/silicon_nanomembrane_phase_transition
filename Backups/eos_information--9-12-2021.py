@@ -6,12 +6,12 @@ import scipy.optimize as sp
 from scipy import interpolate
 import numpy as np
 
-number_of_volume_points = 10000
+number_of_volume_points = 1000000
 n_pressure_values = 1000000
 exchange_correlation = 'PBE'
-N_ML = '7'
+N_ML = '2'
 
-directoryofdata = 'DataFolder' + '.' + exchange_correlation + '.' + 'eos' + '.' + 'Data_' + N_ML + 'L'
+directoryofdata = 'DataFolder' + '.' + exchange_correlation + '.' + 'eosm' + '.' + 'Data_' + N_ML + 'L'
 exec('from {} import *'.format(directoryofdata))
 
 eos_type = 'murnaghan'
@@ -31,22 +31,34 @@ def intersection_idx(equation):  # prints lowerbound index in which the value is
     i = np.argwhere(np.diff(np.sign(equation))).flatten()
     return i
 
+def extend_array_extremas(array,percentage=0):
+    min_value = np.amin(array)
+    max_value = np.amax(array)
+    value_diff = (percentage)*np.absolute(max_value-min_value)
+    return value_diff
 
 #   Diamond structure calculations
 initial_parameters_diamond = (total_energies_strain_diamond[mid(total_energies_strain_diamond)], 1e11, 3.5,volumes_sim_diamond[mid(volumes_sim_diamond)])
 fit_parameters_diamond = sp.fmin(square_differences, initial_parameters_diamond, args=(volumes_sim_diamond, total_energies_strain_diamond, eos), maxiter=100000)
-volumes_diamond = np.linspace(volumes_sim_diamond[0], volumes_sim_diamond[-1], num=number_of_volume_points)
+volume_diamond_extension = extend_array_extremas(volumes_sim_diamond,0.5)
+volumes_diamond = np.linspace(np.amin(volumes_sim_diamond)-volume_diamond_extension, np.amax(volumes_sim_diamond)+volume_diamond_extension, num=number_of_volume_points)
 pressures_diamond = -pressure_from_energy_equation_of_state(fit_parameters_diamond,volumes_diamond,eos=eos_type)
 enthalpy_diamond = enthalpy_from_volume(fit_parameters_diamond, volumes_diamond, eos=eos_type)
 fit_total_energies_strain_diamond = eos(fit_parameters_diamond, volumes_diamond)
 #     Beta-Sn structure calculations
 initial_parameters_shape_betasn = (total_energies_strain_betasn[mid(total_energies_strain_betasn)], 1e11, 3.5, volumes_sim_betasn[mid(volumes_sim_betasn)])
 fit_parameters_betasn = sp.fmin(square_differences, initial_parameters_shape_betasn, args=(volumes_sim_betasn, total_energies_strain_betasn, eos), maxiter=100000)
-volumes_betasn = np.linspace(volumes_sim_betasn[0], volumes_sim_betasn[-1], num=number_of_volume_points)
+volume_betasn_extension = extend_array_extremas(volumes_sim_betasn,0.5)
+volumes_betasn = np.linspace(np.amin(volumes_sim_betasn)-volume_betasn_extension, np.amax(volumes_sim_betasn)+volume_betasn_extension, num=number_of_volume_points)
 pressures_betasn = -pressure_from_energy_equation_of_state(fit_parameters_betasn,volumes_betasn,eos=eos_type)
 enthalpy_betasn = enthalpy_from_volume(fit_parameters_betasn, volumes_betasn, eos=eos_type)
 fit_total_energies_strain_betasn = eos(fit_parameters_betasn, volumes_betasn)
 #           parameters = (E0, K0, K0', V0)
+
+
+# plt.plot(pressures_betasn, enthalpy_betasn*1e18,color='r')
+# plt.plot(pressures_diamond, enthalpy_diamond*1e18,color='b')
+# plt.show()
 
 
 idx_d = np.argsort(pressures_diamond)
@@ -78,9 +90,9 @@ t_vol_b_idx = intersection_idx(pressures_betasn-t_pressure)
 t_volume_betasn = volumes_betasn[t_vol_b_idx]
 
 
-# print(t_pressure*1e-9,'GPa')
-# print(t_volume_diamond*1e30,'Angstroms^3')
-# print(t_volume_betasn*1e30,'Angstroms^3')
+print(t_pressure*1e-9,'GPa')
+print(t_volume_diamond*1e30,'Angstroms^3')
+print(t_volume_betasn*1e30,'Angstroms^3')
 #
 # plt.plot(pressures, enthalpy_diamond_fit*1e18)
 # plt.plot(pressures, enthalpy_betasn_fit*1e18)

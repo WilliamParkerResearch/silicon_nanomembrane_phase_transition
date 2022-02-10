@@ -1,98 +1,1 @@
-def eos_properties(N_ML,number_of_volume_points=10000, n_pressure_values=1000000, vol_ext=0.5, exchange_correlation='PBE', OF=False, etype='ce', n_etype=0, eos_type = 'murnaghan'):
-    import matplotlib.pyplot as plt
-    import scipy.optimize as sp
-    from scipy import interpolate
-    import numpy as np
-    from importlib import import_module
-    from ReferenceFiles.enthalpy import enthalpy_from_volume
-    from ReferenceFiles.FunctionDefinitions import mid,square_differences
-    from ReferenceFiles.equations_of_state import birch_murnaghan,murnaghan,vinet,pressure_from_energy_equation_of_state
-
-    if OF == False:
-        directoryofdata = 'DataFolder' + '.' + exchange_correlation + '.' + 'eostm' + '.' + 'Data_' + str(N_ML) + 'L'
-    else:
-        directoryofdata = 'DataFolder' + '.' + exchange_correlation + '.' + 'eost' + '.' + 'Data_' + str(N_ML) + 'L' + '_' + etype + str(n_etype)
-    data = import_module(directoryofdata)
-
-    if eos_type == 'birch-murnaghan':
-        def eos(p, v):
-            return birch_murnaghan(p, v)
-    elif eos_type == 'murnaghan':
-        def eos(p, v):
-            return murnaghan(p, v)
-    elif eos_type == 'vinet':
-        def eos(p, v):
-            return vinet(p, v)
-
-
-    def intersection_idx(equation):  # prints lowerbound index in which the value is found within it and the index above it
-        i = np.argwhere(np.diff(np.sign(equation))).flatten()
-        return i
-
-
-    def extend_array_extremas(array, percentage=0):
-        min_value = np.amin(array)
-        max_value = np.amax(array)
-        value_diff = (percentage) * np.absolute(max_value - min_value)
-        return value_diff
-
-
-    #   Diamond structure calculations
-    volumes_sim_diamond = data.volumes_sim_diamond
-    total_energies_strain_diamond = data.total_energies_strain_diamond
-    initial_parameters_diamond = (total_energies_strain_diamond[mid(total_energies_strain_diamond)], 1e11, 3.5,
-                                  volumes_sim_diamond[mid(volumes_sim_diamond)])
-    fit_parameters_diamond = sp.fmin(square_differences, initial_parameters_diamond,
-                                     args=(volumes_sim_diamond, total_energies_strain_diamond, eos), maxiter=100000)
-    volume_diamond_extension = extend_array_extremas(volumes_sim_diamond, vol_ext)
-    volumes_diamond = np.linspace(np.amin(volumes_sim_diamond) - volume_diamond_extension,
-                                  np.amax(volumes_sim_diamond) + volume_diamond_extension, num=number_of_volume_points)
-    pressures_diamond = -pressure_from_energy_equation_of_state(fit_parameters_diamond,volumes_diamond,eos=eos_type)
-    enthalpy_diamond = enthalpy_from_volume(fit_parameters_diamond, volumes_diamond, eos=eos_type)
-    fit_total_energies_strain_diamond = eos(fit_parameters_diamond, volumes_diamond)
-    #     Beta-Sn structure calculations
-    volumes_sim_betasn = data.volumes_sim_betasn
-    total_energies_strain_betasn = data.total_energies_strain_betasn
-    initial_parameters_shape_betasn = (total_energies_strain_betasn[mid(total_energies_strain_betasn)], 1e11, 3.5,
-                                       volumes_sim_betasn[mid(volumes_sim_betasn)])
-    fit_parameters_betasn = sp.fmin(square_differences, initial_parameters_shape_betasn,
-                                    args=(volumes_sim_betasn, total_energies_strain_betasn, eos), maxiter=100000)
-    volume_betasn_extension = extend_array_extremas(volumes_sim_betasn, vol_ext)
-    volumes_betasn = np.linspace(np.amin(volumes_sim_betasn) - volume_betasn_extension,
-                                 np.amax(volumes_sim_betasn) + volume_betasn_extension, num=number_of_volume_points)
-    pressures_betasn = -pressure_from_energy_equation_of_state(fit_parameters_betasn,volumes_betasn,eos=eos_type)
-    enthalpy_betasn = enthalpy_from_volume(fit_parameters_betasn, volumes_betasn, eos=eos_type)
-    fit_total_energies_strain_betasn = eos(fit_parameters_betasn, volumes_betasn)
-    #           parameters = (E0, K0, K0', V0)
-
-    idx_d = np.argsort(pressures_diamond)
-    pressures_diamond = pressures_diamond[idx_d]
-    enthalpy_diamond = enthalpy_diamond[idx_d]
-
-    idx_b = np.argsort(pressures_betasn)
-    pressures_betasn = pressures_betasn[idx_b]
-    enthalpy_betasn = enthalpy_betasn[idx_b]
-
-
-    pressure_min = np.amax(np.array([pressures_diamond[0],pressures_betasn[0]]))
-    pressure_max = np.amin(np.array([pressures_diamond[-1],pressures_betasn[-1]]))
-    pressures = np.linspace(pressure_min,pressure_max,n_pressure_values)
-
-    enthalpy_diamond_func = interpolate.interp1d(pressures_diamond,enthalpy_diamond)
-    enthalpy_diamond_fit = enthalpy_diamond_func(pressures)
-    enthalpy_betasn_func = interpolate.interp1d(pressures_betasn,enthalpy_betasn)
-    enthalpy_betasn_fit = enthalpy_betasn_func(pressures)
-
-    enthalpy_diff = enthalpy_diamond_fit-enthalpy_betasn_fit
-
-    p_idx = intersection_idx(enthalpy_diff)
-    t_pressure = pressures[int(p_idx)]
-
-    t_vol_d_idx = intersection_idx(pressures_diamond-t_pressure)
-    t_volume_diamond = float(volumes_diamond[t_vol_d_idx])
-
-    t_vol_b_idx = intersection_idx(pressures_betasn-t_pressure)
-    t_volume_betasn = float(volumes_betasn[t_vol_b_idx])
-    return t_pressure,t_volume_diamond,t_volume_betasn,fit_parameters_diamond,fit_parameters_betasn
-
-
+def eos_properties(N_ML,number_of_volume_points=1000000, n_pressure_values=1000000, vol_ext=0.5, propd=0, propb=0,eos_folder='eos',exchange_correlation='PBE', OF=False, etype='ce', n_etype=0, eos_type = 'vinet'):    import matplotlib.pyplot as plt    import scipy.optimize as sp    from scipy import interpolate    import numpy as np    from importlib import import_module    from ReferenceFiles.enthalpy import enthalpy_from_volume    from ReferenceFiles.FunctionDefinitions import mid,square_differences    from ReferenceFiles.equations_of_state import birch_murnaghan,murnaghan,vinet,pressure_from_energy_equation_of_state    from ReferenceFiles.vasp_python_converter import vasp_data_modifier, ind_atom_distances    from ReferenceFiles.pair_distribution import format_pdf    from scipy.signal import find_peaks    if OF == False:        directoryofdata = 'DataFolder' + '.' + exchange_correlation + '.' + eos_folder + '.' + 'Data_' + str(N_ML) + 'L'    else:        directoryofdata = 'DataFolder' + '.' + exchange_correlation + '.' + eos_folder + '.' + 'Data_' + str(N_ML) + 'L' + '_' + etype + str(n_etype)    data = import_module(directoryofdata)    if eos_type == 'birch-murnaghan':        def eos(p, v):            return birch_murnaghan(p, v)    elif eos_type == 'murnaghan':        def eos(p, v):            return murnaghan(p, v)    elif eos_type == 'vinet':        def eos(p, v):            return vinet(p, v)    def intersection_idx(equation):  # prints lowerbound index in which the value is found within it and the index above it        i = np.argwhere(np.diff(np.sign(equation))).flatten()        return i    def extend_array_extremas(array, percentage=0):        min_value = np.amin(array)        max_value = np.amax(array)        value_diff = (percentage) * np.absolute(max_value - min_value)        return value_diff    if eos_folder == 'eos':        n_atom = 8    elif eos_folder == 'eosztest' or eos_folder=='eostest':        n_atom_d = data.n_atom_d        n_atom_b = data.n_atom_b    else:        n_atom = data.n_atom                    atomic_positions_d = vasp_data_modifier(N_ML, 'diamond')[0]    atom_bonds_mind = ind_atom_distances(1,atomic_positions_d)[0]    atom_bonds_maxd = ind_atom_distances((N_ML*8),atomic_positions_d)[0]    zpos_upper_cell_d = np.sort(atomic_positions_d[:,2][-8:])    zmax_upper_cell_d = zpos_upper_cell_d[-1]    zmin_upper_cell_d = zpos_upper_cell_d[0]    delta_z_d = zmax_upper_cell_d-zmin_upper_cell_d    atomic_positions_b = vasp_data_modifier(N_ML, 'betasn')[0]    atom_bonds_minb = ind_atom_distances(1,atomic_positions_b)[0]    atom_bonds_maxb = ind_atom_distances((N_ML*8),atomic_positions_b)[0]    zpos_upper_cell_b = np.sort(atomic_positions_b[:,2][-8:])    zmax_upper_cell_b = zpos_upper_cell_b[-1]    zmin_upper_cell_b = zpos_upper_cell_b[0]    delta_z_b = zmax_upper_cell_b-zmin_upper_cell_b########################################################################################################################    minimum_distance,maximum_distance = 1,6    atomic_positions_d = vasp_data_modifier(N_ML, 'diamond')[0]    distance_values_d, pair_distribution_values_d = format_pdf(atomic_positions_d, mass_density=2300,                                                               minimum_distance=minimum_distance,                                                               maximum_distance=maximum_distance)    br_idx_d = np.where(np.logical_and(distance_values_d >= 2.2, distance_values_d <= 2.5))[0]    dv1d = distance_values_d[br_idx_d]    pdv1d = pair_distribution_values_d[br_idx_d]    maxbd_idx_d = np.argwhere(pdv1d == np.amax(pdv1d))[0][0]    atom_bonds_mind = ind_atom_distances(1, atomic_positions_d)[0]    atom_bonds_maxd = ind_atom_distances((N_ML * 8), atomic_positions_d)[0]    cell_c_add = (atom_bonds_maxd + atom_bonds_mind) / 2    atomic_positions_b = vasp_data_modifier(N_ML, 'betasn')[0]    distance_values_b, pair_distribution_values_b = format_pdf(atomic_positions_b, 3370,                                                               minimum_distance=minimum_distance,                                                               maximum_distance=maximum_distance)    br_idx_b = np.where(np.logical_and(distance_values_b >= 2.3, distance_values_d <= 2.85))[0]    dv1b = distance_values_b[br_idx_b]    pdv1b = pair_distribution_values_b[br_idx_b]    maxbd_idx_b = np.argwhere(pdv1b == np.amax(pdv1b))[0][0]    peaksd, _ = find_peaks(pdv1d, height=0)    peaksb, _ = find_peaks(pdv1b, height=0, distance=150)    if len(peaksd) > 1:        pidxd = np.argsort(pdv1d[peaksd])        peaksd = peaksd[pidxd[-1:]]    if len(peaksb) > 2:        pidxb = np.argsort(pdv1b[peaksb])        peaksb = peaksb[pidxb[-2:]]    max_bond_d = dv1d[peaksd][0]    avg_bond_d = max_bond_d    max_bond_b = np.sort(dv1b[peaksb])[-1]    min_bond_b = np.sort(dv1b[peaksb])[0]    avg_bond_b = (max_bond_b+min_bond_b)/2########################################################################################################################    if N_ML == 0:        propd = 0        propb = 0        cell_c_diamond_add = 0        cell_c_betasn_add = 0        cell_c_diamond_add2 = 0        cell_c_betasn_add2 = 0        nml = 1        upper_cell_c_diamond_add = 0        upper_cell_c_betasn_add = 0    else:        nml = N_ML        cell_c_diamond_add = (atom_bonds_maxd + atom_bonds_mind)*1e-10 / 2        cell_c_betasn_add = (atom_bonds_maxb + atom_bonds_minb)*1e-10 / 2        cell_c_diamond_add2 = (avg_bond_d)*1e-10        cell_c_betasn_add2 = (avg_bond_b)*1e-10        upper_cell_c_diamond_add = delta_z_d * 1e-10*((1 / 0.75) - 1)        upper_cell_c_betasn_add = delta_z_b * 1e-10*((1 / 0.875) - 1)        print(cell_c_betasn_add,cell_c_diamond_add)            #   Diamond structure calculations    cell_a_diamond = data.cella_diamond    cell_c_diamond = data.cellc_diamond    if eos_folder == 'eosz':        # volumes_sim_diamond = cell_a_diamond*cell_a_diamond*(cell_c_diamond+((cell_c_diamond/nml)*propd))/n_atom        volumes_sim_diamond = cell_a_diamond * cell_a_diamond * (cell_c_diamond + propd*cell_c_diamond_add2) / n_atom    elif eos_folder == 'eosztest':        volumes_sim_diamond = cell_a_diamond * cell_a_diamond * (cell_c_diamond + propd*cell_c_diamond_add) / n_atom_d    elif eos_folder == 'eostest':        volumes_sim_diamond = cell_a_diamond * cell_a_diamond * (cell_c_diamond) / 8    else:        volumes_sim_diamond = cell_a_diamond*cell_a_diamond*cell_c_diamond/8    total_energies_strain_diamond = data.total_energies_strain_diamond    initial_parameters_diamond = (total_energies_strain_diamond[mid(total_energies_strain_diamond)], 1e11, 3.5,                                  volumes_sim_diamond[mid(volumes_sim_diamond)])    fit_parameters_diamond = sp.fmin(square_differences, initial_parameters_diamond,                                     args=(volumes_sim_diamond, total_energies_strain_diamond, eos),maxiter=100000)    volume_diamond_extension = extend_array_extremas(volumes_sim_diamond, vol_ext)    volumes_diamond = np.linspace(np.amin(volumes_sim_diamond) - volume_diamond_extension,                                  np.amax(volumes_sim_diamond) + volume_diamond_extension, num=number_of_volume_points)    pressures_diamond = -pressure_from_energy_equation_of_state(fit_parameters_diamond,volumes_diamond,eos=eos_type)    enthalpy_diamond = enthalpy_from_volume(fit_parameters_diamond, volumes_diamond, eos=eos_type)    fit_total_energies_strain_diamond = eos(fit_parameters_diamond, volumes_diamond)    cella0_diamond = np.mean(data.cella_diamond)    if eos_folder == 'eosz':        cellc0_diamond = n_atom * fit_parameters_diamond[-1] / (cella0_diamond ** 2)    elif eos_folder == 'eosztest' or eos_folder == 'eostest':        cellc0_diamond = n_atom_d * fit_parameters_diamond[-1] / (cella0_diamond ** 2)    else:        cellc0_diamond = n_atom * fit_parameters_diamond[-1] / (cella0_diamond ** 2)            #     Beta-Sn structure calculations    cell_a_betasn = data.cella_betasn    cell_c_betasn = data.cellc_betasn        if eos_folder == 'eosz':        # volumes_sim_betasn = cell_a_betasn * cell_a_betasn * (cell_c_betasn + ((cell_c_betasn / nml) * propb))/n_atom        volumes_sim_betasn = cell_a_betasn * cell_a_betasn * (cell_c_betasn + propb*cell_c_betasn_add2) / (n_atom)    elif eos_folder == 'eosztest':        volumes_sim_betasn = cell_a_betasn * cell_a_betasn * (cell_c_betasn + propb*cell_c_betasn_add) / (n_atom_b)    elif eos_folder == 'eostest':        volumes_sim_betasn = cell_a_betasn * cell_a_betasn * (cell_c_betasn) / 4    else:        volumes_sim_betasn = cell_a_betasn * cell_a_betasn * (cell_c_betasn)/(8)    total_energies_strain_betasn = data.total_energies_strain_betasn    initial_parameters_shape_betasn = (total_energies_strain_betasn[mid(total_energies_strain_betasn)], 1e11, 3.5,                                       volumes_sim_betasn[mid(volumes_sim_betasn)])    fit_parameters_betasn = sp.fmin(square_differences, initial_parameters_shape_betasn,                                    args=(volumes_sim_betasn, total_energies_strain_betasn, eos), maxiter=100000)    volume_betasn_extension = extend_array_extremas(volumes_sim_betasn, vol_ext)    volumes_betasn = np.linspace(np.amin(volumes_sim_betasn) - volume_betasn_extension,                                 np.amax(volumes_sim_betasn) + volume_betasn_extension, num=number_of_volume_points)    pressures_betasn = -pressure_from_energy_equation_of_state(fit_parameters_betasn,volumes_betasn,eos=eos_type)    enthalpy_betasn = enthalpy_from_volume(fit_parameters_betasn, volumes_betasn, eos=eos_type)    fit_total_energies_strain_betasn = eos(fit_parameters_betasn, volumes_betasn)    cella0_betasn = np.mean(data.cella_betasn)    if eos_folder == 'eosz':        cellc0_betasn = n_atom * fit_parameters_betasn[-1] / (cella0_betasn ** 2)    elif eos_folder == 'eosztest' or eos_folder == 'eostest':        cellc0_betasn = n_atom_b * fit_parameters_betasn[-1] / (cella0_betasn ** 2)    else:        cellc0_betasn = n_atom * fit_parameters_betasn[-1] / (cella0_betasn ** 2)        #           parameters = (E0, K0, K0', V0)    idx_d = np.argsort(pressures_diamond)    pressures_diamond = pressures_diamond[idx_d]    enthalpy_diamond = enthalpy_diamond[idx_d]    idx_b = np.argsort(pressures_betasn)    pressures_betasn = pressures_betasn[idx_b]    enthalpy_betasn = enthalpy_betasn[idx_b]    pressure_min = np.amax(np.array([pressures_diamond[0],pressures_betasn[0]]))    pressure_max = np.amin(np.array([pressures_diamond[-1],pressures_betasn[-1]]))    pressures = np.linspace(pressure_min,pressure_max,n_pressure_values)    enthalpy_diamond_func = interpolate.interp1d(pressures_diamond,enthalpy_diamond)    enthalpy_diamond_fit = enthalpy_diamond_func(pressures)    enthalpy_betasn_func = interpolate.interp1d(pressures_betasn,enthalpy_betasn)    enthalpy_betasn_fit = enthalpy_betasn_func(pressures)    enthalpy_diff = enthalpy_diamond_fit-enthalpy_betasn_fit    p_idx = intersection_idx(enthalpy_diff)    t_pressure = pressures[int(p_idx)]    t_vol_d_idx = intersection_idx(pressures_diamond-t_pressure)    t_volume_diamond = float(volumes_diamond[t_vol_d_idx])    t_vol_b_idx = intersection_idx(pressures_betasn-t_pressure)    t_volume_betasn = float(volumes_betasn[t_vol_b_idx])    return t_pressure,t_volume_diamond,t_volume_betasn,fit_parameters_diamond,fit_parameters_betasn,cella0_diamond,cella0_betasn,cellc0_diamond,cellc0_betasn,volumes_sim_diamond,volumes_sim_betasn,atom_bonds_mind,atom_bonds_minb,atom_bonds_maxd,atom_bonds_maxb

@@ -64,3 +64,44 @@ def find_nearest(array, value):
     array = np.asarray(array)
     idx = np.argmin((np.abs(array - value)))
     return [array[idx], idx]
+
+
+# Gives array with indeces of atomic positions ordered from leat to greatest z position
+def zpos_sort_idx(N_ML, phase):
+    from ReferenceFiles.vasp_python_converter import vasp_data_modifier
+    import numpy as np
+
+    positions = vasp_data_modifier(N_ML, phase)[0]
+    zpos = positions[:, 2]
+
+    zpos_sort_idxs = np.argsort(zpos)
+
+    return zpos_sort_idxs
+
+
+#used to find the spline of arrays with repeated x values using the average y values of the repeated x values
+def spline_prep(x,y):
+    import numpy as np
+
+
+    arr1 = x.astype(float)
+    arr2 = y.astype(float)
+
+    values, count = np.unique(arr1,return_counts=True)
+    repeated_values_idxs = np.argwhere(count > 1)
+    repeated_values = values[repeated_values_idxs]
+
+    idxs_to_delete = np.array([])
+
+
+    for i in repeated_values:
+        arr1_idxs_i = np.argwhere(arr1 == i)
+        arr2_correspondents = arr2[arr1_idxs_i]
+        arr2_correspondents_mean = np.mean(arr2_correspondents)
+        arr2[arr1_idxs_i] = arr2_correspondents_mean
+        idxs_to_delete = np.append(idxs_to_delete,arr1_idxs_i[1:])
+
+
+    arr1_p = np.delete(arr1,idxs_to_delete.astype(int))
+    arr2_p = np.delete(arr2,idxs_to_delete.astype(int))
+    return arr1_p,arr2_p
