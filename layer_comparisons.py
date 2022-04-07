@@ -29,7 +29,7 @@ prd = 1
 prb = prd
 showplot=True
 if fold == 'eostest' or fold == 'eosztest':
-    n_layers = np.array([0, 2, 4, 6, 8])
+    n_layers = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
 else:
     n_layers = np.arange(0, 9, 1)
 
@@ -203,7 +203,7 @@ cont_transition_pressures = property_curve_fitter(cont_nml,optimized_parameters[
 ########################################################################################################################
 
 
-####Pressure Plot
+###Pressure Plot
 # <editor-fold desc="P_T">
 fig = plt.figure(figsize=fs_m_12)
 # plt.plot(cont_nml,cont_transition_pressures*1e-9,zorder=2,color=adjust_lightness(rgbcode_pressure,0.9),linewidth=linewidth)
@@ -228,7 +228,7 @@ plt.legend(lines,labels,loc='lower right')
 plot(showplot,'nml_tpressure')
 # </editor-fold>
 
-####Cohesive Energies
+###Cohesive Energies
 # <editor-fold desc="E_coh">
 fig = plt.figure(figsize=fs_m_12)
 plt.plot(n_layers[1:],cohesive_energy0_diamond*eV_per_joule,zorder=3,color=rgbcode_diamond_m,linewidth=linewidth)
@@ -272,11 +272,25 @@ plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
 plt.ylim(19,25.5)
 
+
 lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_diamond_m,0.9),marker=mark_d,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_diamond,adj_l-0.1),linestyle='dashed',linewidth=universal_linewidth)]
 labels = ['N-ML','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+print(cell_c_diamond)
+print(xticks2[1:-1])
+axes2.set_xticklabels(np.around((cell_c_diamond[(xticks2[1:-1]-1).astype(int)]*xticks2[1:-1])*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
 plot(showplot,'nml_volumes0_diamond')
 # </editor-fold>
 
@@ -297,6 +311,18 @@ lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_diamond_m,1.1),marker=m
 labels = ['N-ML','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
 plot(showplot,'nml_tvolumes_diamond')
 # </editor-fold>
 
@@ -333,6 +359,18 @@ lines = [Line2D([0], [0], color=rgbcode_diamond_m,markerfacecolor=rgbcode_black,
 labels = ['N-ML Cell A','N-ML Cell C/N-ML','Bulk Cell Sizes']
 
 plt.legend(lines,labels,loc='upper right')
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
 plot(showplot,'nml_cell0s_diamond')
 # </editor-fold>
 
@@ -354,6 +392,18 @@ lines = [Line2D([0], [0], color=rgbcode_diamond_m,marker=mark_d,linewidth=univer
 labels = ['N-ML','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
 plot(showplot,'nml_bulkmodulus_diamond')
 # </editor-fold>
 
@@ -381,6 +431,18 @@ lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_betasn_m,0.9),marker=ma
 labels = ['N-ML','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
 plot(showplot,'nml_volumes0_betasn')
 # </editor-fold>
 
@@ -401,6 +463,18 @@ lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_betasn_m,1.1),marker=ma
 labels = ['N-ML','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
 plot(showplot,'nml_tvolumes_betasn')
 # </editor-fold>
 
@@ -441,6 +515,18 @@ lines = [Line2D([0], [0], color=rgbcode_betasn_m,markerfacecolor=rgbcode_black,m
 labels = ['N-ML Cell A','Bulk Cell A','N-ML Cell C/N-ML','Bulk Cell C']
 
 plt.legend(lines,labels) #bbox_to_anchor=(0.5, 0.4)
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
 plot(showplot,'nml_cell0s_betasn')
 # </editor-fold>
 
@@ -461,5 +547,17 @@ lines = [Line2D([0], [0], color=rgbcode_betasn_m,marker=mark_b,linewidth=univers
 labels = ['N-ML','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
+
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
 plot(showplot,'nml_bulkmodulus_betasn')
 # </editor-fold>

@@ -1,0 +1,71 @@
+ &control
+    pseudo_dir        = '/share/pseudo'
+    calculation       = 'relax'
+    title             = 'Relaxation of atomic positions for single monolayer slab of Si using PBE'
+    verbosity         = 'low'
+    nstep             = 150
+    tstress           = .true.
+    tprnfor           = .true.
+    outdir            = '.'
+    prefix            = 'Si.Fd-3m_2ML'
+    max_seconds       = 1.00d7       ! 115 days
+    etot_conv_thr     = 7.35d-04     ! 10 meV = 1.6 zJ
+    forc_conv_thr     = 1.94d-04     ! 100 meV / angstrom = 160 pN
+ /                 
+ &system           
+    ibrav             = 0
+    celldm(1)         = 10.26845065753
+    nat               = 16
+    ntyp              = 1
+    nbnd              = 48           ! = 1.5 * N_atom * N_elec/atom / 2 
+    ecutwfc           = 45.0
+    ecutrho           = 175.0
+    occupations       = 'smearing'
+    degauss           = 1.00d-2
+    smearing          = 'gaussian'
+    nspin             = 1
+    assume_isolated   = 'none'
+ /                 
+ &electrons        
+    electron_maxstep  = 500
+    scf_must_converge = .true.
+    conv_thr          = 1.00d-10
+    adaptive_thr      = .false.
+    mixing_mode       = 'local-TF'
+    mixing_beta       = 0.5
+    mixing_ndim       = 8
+    diagonalization   = 'cg'
+    startingpot       = 'atomic'
+    startingwfc       = 'atomic+random'
+ /
+ &ions
+    ion_dynamics      = 'damp'
+    ion_positions     = 'default'
+    pot_extrapolation = 'atomic'
+    wfc_extrapolation = 'none'
+ /
+ATOMIC_SPECIES
+ Si  28.086  Si.pbe-nl-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS angstrom
+ Si       0.012593875   0.012593875   5.514281012 1 1 1
+ Si       0.012691117   2.729732160   8.424517672 1 1 1
+ Si       2.729732160   0.012691117   8.424517672 1 1 1
+ Si       2.729461783   2.729461783   5.896207680 1 1 1
+ Si       1.291662413   1.291662413   7.050142817 1 1 1
+ Si       1.341930692   4.117399806   9.794251883 1 1 1
+ Si       4.117399806   1.341930692   9.794251883 1 1 1
+ Si       4.167314987   4.167314987   7.049914177 1 1 1
+ Si       0.012667969   0.012667969  11.259555182 1 1 1
+ Si       0.012864446   2.729477855  13.938847406 1 1 1
+ Si       2.729477855   0.012864446  13.938847406 1 1 1
+ Si       2.729777731   2.729777731  11.070755958 1 1 1
+ Si       1.441028904   1.441028904  12.547393075 1 1 1
+ Si       0.817700518   4.641423545  15.001063919 1 1 1
+ Si       4.641423545   0.817700518  15.001063919 1 1 1
+ Si       4.018325695   4.018325695  12.547879853 1 1 1
+K_POINTS automatic
+ 8 8 1 0 0 0
+CELL_PARAMETERS alat
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 3.38

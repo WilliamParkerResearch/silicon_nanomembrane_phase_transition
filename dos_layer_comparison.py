@@ -166,4 +166,20 @@ labels = ['N-ML','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
 
-plot(False,'nml_fermi_dos_diamond')
+
+axes1 = plt.gca()
+axes2 = axes1.twiny()
+xticks2 = axes1.get_xticks()
+axes2.set_xticks(xticks2)
+axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+axes2.tick_params(labelsize=tick_fontsize-2)
+
+
+from layer_comparisons import cell_c_diamond
+
+
+axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
+axes2.set_xlim(axes1.get_xlim())
+
+
+plot(True,'nml_fermi_dos_diamond')

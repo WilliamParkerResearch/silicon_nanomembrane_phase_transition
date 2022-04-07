@@ -8,7 +8,7 @@ from ReferenceFiles.FunctionDefinitions import zpos_sort_idx
 
 exchange_correlation = 'PBE'
 phase = 'diamond'
-N_ML = '10'
+N_ML = '22'
 order_idx = zpos_sort_idx(N_ML,phase)
 if N_ML == 0:
     nat = 8
