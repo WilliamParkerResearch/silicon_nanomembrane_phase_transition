@@ -7,7 +7,7 @@ from ReferenceFiles.FunctionDefinitions import zpos_sort_idx
 from importlib import import_module
 import matplotlib.patches as mpatches
 
-def dos_plotter(N_ML,exchange_correlation = 'PBE',phase = 'diamond',lightness = 1):
+def dos_plotter(N_ML,exchange_correlation = 'PBE',phase = 'diamond',lightness = 1,linestyle='solid',style=''):
     N_ML = str(N_ML)
 
     order_idx = zpos_sort_idx(N_ML,phase)
@@ -59,12 +59,12 @@ def dos_plotter(N_ML,exchange_correlation = 'PBE',phase = 'diamond',lightness = 
         labelc = 'Bulk'
     else:
         labelc = str(N_ML) + '-ML'
-    plt.fill_between(et - fermi_energy,pdost/nat,color=adjust_lightness(rgbcode_electric,lightness))
-    plt.plot(et - fermi_energy,pdost/nat,color=adjust_lightness(rgbcode_electric,lightness),linewidth=universal_linewidth,label=labelc)
+    plt.fill_between(et - fermi_energy,pdost/nat,hatch=style,facecolor=adjust_lightness(rgbcode_electric,lightness),edgecolor=adjust_lightness(rgbcode_electric,lightness-0.6))
+    plt.plot(et - fermi_energy,pdost/nat,color=adjust_lightness(rgbcode_electric,lightness),linewidth=universal_linewidth+0.5,label=labelc)
+    plt.plot(et - fermi_energy,pdost/nat,color=adjust_lightness(rgbcode_electric,lightness-0.6),linewidth=universal_linewidth+0.5,linestyle=linestyle)
 
-    plt.fill_between(et - fermi_energy,atoms_dos,color=adjust_lightness(rgbcode_electric,lightness-0.25))
-    plt.plot(et - fermi_energy,atoms_dos,color=adjust_lightness(rgbcode_electric,lightness-0.4),linewidth=universal_linewidth)
-
+    # plt.fill_between(et - fermi_energy,atoms_dos,color=adjust_lightness(rgbcode_electric,lightness-0.25))
+    # plt.plot(et - fermi_energy,atoms_dos,color=adjust_lightness(rgbcode_electric,lightness-0.4),linewidth=universal_linewidth)
     plt.hlines(y=0,xmin=np.amin(et)-fermi_energy,xmax=np.amax(et)-fermi_energy,color=rgbcode_black,linewidth=universal_linewidth)
     plt.xlim(-5,5)
     plt.gca().set_ylim(bottom=0)
@@ -82,21 +82,21 @@ fig.subplots_adjust(hspace=0)
 
 
 ax1 = plt.subplot(212)
-dos_plotter(1,phase=phase,lightness=1.15)
+dos_plotter(1,phase=phase,lightness=1.35)
 color1 = plt.gca().lines[0].get_color()
 label1 = plt.gca().lines[0].get_label()
 plt.xlabel(r'$\varepsilon_{\rm KS}$ (eV)', fontsize=axis_fontsize)
 
 
 ax0 = plt.subplot(211)
-dos_plotter(0,phase=phase,lightness=0.85)
+dos_plotter(0,phase=phase,lightness=0.85,linestyle='dashed',style='xxx')
 color0 = plt.gca().lines[0].get_color()
 label0 = plt.gca().lines[0].get_label()
 ax0.axes.xaxis.set_visible(False)
 
 
-DOS0 = mpatches.Patch(color=color0, label=label0)
-DOS1 = mpatches.Patch(color=color1, label=label1)
+DOS0 = mpatches.Patch(facecolor=color0, label=label0, hatch='xxx', edgecolor=adjust_lightness(rgbcode_diamond,0.85-0.6),linestyle='--',linewidth=universal_linewidth)
+DOS1 = mpatches.Patch(facecolor=color1, label=label1, edgecolor=adjust_lightness(rgbcode_diamond,1.35-0.6),linestyle='solid', linewidth=universal_linewidth)
 
 plt.legend(handles=[DOS0,DOS1], loc='upper right',ncol=2)
 

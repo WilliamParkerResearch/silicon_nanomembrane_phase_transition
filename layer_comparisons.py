@@ -12,9 +12,9 @@ from ReferenceFiles.pair_distribution import format_pdf, plot_pdf
 from scipy.signal import find_peaks
 # <editor-fold desc="mpl mods">
 #Use TeX fonts
-# mpl.rcParams['text.usetex'] = True
-# mpl.rcParams['font.sans-serif'] = "cmr10"
-# mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['font.sans-serif'] = "cmr10"
+mpl.rcParams['font.family'] = 'serif'
 mpl.rcParams['axes.formatter.useoffset'] = False
 # </editor-fold>
 # <editor-fold desc="plot format variables">
@@ -24,14 +24,71 @@ linewidth = universal_linewidth
 
 
 XC = 'PBE'
-fold = 'eosztest'
-prd = 1
+fold = 'eosz'
+prd = 1             #proportion of average radius
 prb = prd
-showplot=True
+showplot=False
 if fold == 'eostest' or fold == 'eosztest':
     n_layers = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
 else:
     n_layers = np.arange(0, 9, 1)
+
+# def second_axis_diamond():
+#     axes1 = plt.gca()
+#     axes2 = axes1.twiny()
+#     xticks2 = axes1.get_xticks()
+#     axes2.set_xticks(xticks2)
+#     axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
+#     axes2.tick_params(labelsize=tick_fontsize-2)
+#
+#     xlabels2 = np.around(cell_c_diamond[(xticks2[1:-1]-1).astype(int)]*1e10,decimals=2)
+#     xlabels2 = np.append(xlabels2,'')
+#     xlabels2 = np.append('',xlabels2)
+#
+#     axes2.set_xticklabels(xlabels2)
+#     axes2.set_xlim(axes1.get_xlim())
+#     return
+
+def second_axis_diamond():
+    axes1 = plt.gca()
+    axes2 = axes1.twiny()
+    xticks2 = axes1.get_xticks()
+    axes2.set_xlabel(r'$d ({\rm \AA})$',fontsize=axis_fontsize)
+    axes2.tick_params(labelsize=tick_fontsize-2)
+
+    xlabels2 = np.around(cell_c_diamond[(xticks2[1:-1]-1).astype(int)]*1e10,decimals=2)
+    xlabels2 = np.append(xlabels2,'')
+    xlabels2 = np.append('',xlabels2)
+
+    x1_limi = axes1.get_xlim()[0]
+    x1_limf = axes1.get_xlim()[1]
+    nml_diff = xticks2[1:-1][-1]-xticks2[1:-1][0]
+    d_diff = xlabels2[1:-1][-1].astype(float)-xlabels2[1:-1][0].astype(float)
+    x2_limi = x1_limi*d_diff/nml_diff
+    x2_limf = x1_limf*d_diff/nml_diff
+    axes2.set_xlim(x2_limi,x2_limf)
+    return
+
+
+def second_axis_betasn():
+    axes1 = plt.gca()
+    axes2 = axes1.twiny()
+    xticks2 = axes1.get_xticks()
+    axes2.set_xlabel(r'$d ({\rm \AA})$',fontsize=axis_fontsize)
+    axes2.tick_params(labelsize=tick_fontsize-2)
+
+    xlabels2 = np.around(cell_c_betasn[(xticks2[1:-1]-1).astype(int)]*1e10,decimals=2)
+    xlabels2 = np.append(xlabels2,'')
+    xlabels2 = np.append('',xlabels2)
+
+    x1_limi = axes1.get_xlim()[0]
+    x1_limf = axes1.get_xlim()[1]
+    nml_diff = xticks2[1:-1][-1]-xticks2[1:-1][0]
+    d_diff = xlabels2[1:-1][-1].astype(float)-xlabels2[1:-1][0].astype(float)
+    x2_limi = x1_limi*d_diff/nml_diff
+    x2_limf = x1_limf*d_diff/nml_diff
+    axes2.set_xlim(x2_limi,x2_limf)
+    return
 
 ############################################
 ############################################
@@ -189,7 +246,7 @@ cont_transition_pressures = property_curve_fitter(cont_nml,optimized_parameters[
 # plt.plot(n_layers[1:],(cb0*(n_layers[1:]-1+0.875))*1e10,zorder=4,color=adjust_lightness(rgbcode_betasn_d,adj_l),linewidth=linewidth,linestyle='dashed')
 #
 #
-# plt.xlabel('N-ML',fontsize=axis_fontsize)
+# plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 # plt.ylabel(r'Cell Size (\r{A})',fontsize=axis_fontsize)
 # plt.xticks(fontsize=tick_fontsize)
 # plt.yticks(fontsize=tick_fontsize)
@@ -213,7 +270,7 @@ plt.hlines(y=-t_pres0*1e-9,zorder=4,xmin=n_layers[1],xmax=m_layer,color=adjust_l
 plt.hlines(y=0,zorder=1,xmin=n_layers[1],xmax=m_layer,color=rgbcode_black+(1,))
 
 
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'$P_{T}$ (GPa)',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
@@ -221,7 +278,7 @@ plt.yticks(fontsize=tick_fontsize)
 
 lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_pressure,0.9),marker=mark_p,linewidth=universal_linewidth),
          Line2D([0], [0], color=rgbcode_pressure,linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 
 plt.legend(lines,labels,loc='lower right')
@@ -240,8 +297,8 @@ plt.scatter(n_layers[1:],cohesive_energy0_betasn*eV_per_joule,zorder=6,color=rgb
 plt.hlines(y=cohesive_energy0_b0*eV_per_joule,xmin=n_layers[1],xmax=n_layers[-1],zorder=1,color=adjust_lightness(rgbcode_betasn,adj_l),linewidth=linewidth,linestyle='dashed')
 
 
-plt.xlabel('N-ML',fontsize=axis_fontsize)
-plt.ylabel(r'${E}_{coh}$ (eV/atom)',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
+plt.ylabel(r'${E}_{\rm coh}$ (eV/atom)',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
 
@@ -249,7 +306,7 @@ lines = [Line2D([0], [0], color=rgbcode_diamond_m,marker=mark_d,linewidth=univer
          Line2D([0], [0], color=rgbcode_betasn_m, marker=mark_b, linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_diamond,adj_l),linestyle='dashed',linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_betasn,adj_l),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML Diamond*',r'N-ML $\beta$-tin*',' Bulk Diamond',r'Bulk $\beta$-tin']
+labels = [r'$N_{\rm ML}$ Diamond*',r'$N_{\rm ML}$ $\beta$-tin*',' Bulk Diamond',r'Bulk $\beta$-tin']
 
 plt.legend(lines,labels,loc='lower right')
 plot(showplot,'nml_cenergies')
@@ -266,8 +323,8 @@ fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],volumes0_diamond*1e30,zorder=2,color=adjust_lightness(rgbcode_diamond_m,0.9),linewidth=linewidth)
 plt.scatter(n_layers[1:],volumes0_diamond*1e30,zorder=3,color=adjust_lightness(rgbcode_diamond_m,0.9), linewidth=linewidth, s=marker_size,marker=mark_d)
 plt.hlines(y=vol0_d0*1e30,xmin=n_layers[1],xmax=n_layers[-1],zorder=1,color=adjust_lightness(rgbcode_diamond,adj_l-0.1),linewidth=linewidth,linestyle='dashed')
-plt.xlabel('N-ML',fontsize=axis_fontsize)
-plt.ylabel(r'${\mathit{V}}_{0}$ (\r{A}$^3$/atom)',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
+plt.ylabel(r'${V}_{0}$ (${\rm \AA}^3$/atom)',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
 plt.ylim(19,25.5)
@@ -275,32 +332,22 @@ plt.ylim(19,25.5)
 
 lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_diamond_m,0.9),marker=mark_d,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_diamond,adj_l-0.1),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
 
-
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-print(cell_c_diamond)
-print(xticks2[1:-1])
-axes2.set_xticklabels(np.around((cell_c_diamond[(xticks2[1:-1]-1).astype(int)]*xticks2[1:-1])*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
+second_axis_diamond()
 
 plot(showplot,'nml_volumes0_diamond')
 # </editor-fold>
 
-####Transition Volumes
+# ####Transition Volumes
 # <editor-fold desc="Vol_T Diamond">
 fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],transition_volumes_diamond*1e30,zorder=2,color=adjust_lightness(rgbcode_diamond_m,1.1),linewidth=linewidth)
 plt.scatter(n_layers[1:],transition_volumes_diamond*1e30,zorder=3,color=adjust_lightness(rgbcode_diamond_m,1.1), linewidth=linewidth, s=marker_size,marker=mark_d)
 plt.hlines(y=vol_d0*1e30,xmin=n_layers[1],xmax=n_layers[-1],zorder=1,color=adjust_lightness(rgbcode_diamond,adj_l+0.1),linewidth=linewidth,linestyle='dashed')
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'${\mathit{V}}_{T}$ (\r{A}$^3$/atom)',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
@@ -308,25 +355,17 @@ plt.ylim(19,25.5)
 
 lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_diamond_m,1.1),marker=mark_d,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_diamond,adj_l+0.1),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
 
 
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
-
+second_axis_diamond()
 
 plot(showplot,'nml_tvolumes_diamond')
 # </editor-fold>
-
-####Cell Dimensions
+#
+# ####Cell Dimensions
 # <editor-fold desc="CellSize Diamond">
 fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],cell_a_diamond*1e10,zorder=2,color=rgbcode_diamond_m,linewidth=linewidth)
@@ -347,7 +386,7 @@ elif fold == 'eosztest' or fold == 'eostest':
 # plt.plot(n_layers[1:],cell_c_diamond*1e10,zorder=4,color=rgbcode_diamond_d,linewidth=linewidth)
 # plt.scatter(n_layers[1:],cell_c_diamond*1e10,zorder=5,color=rgbcode_white,edgecolor=rgbcode_diamond_d,linewidth=linewidth,marker=mark_d, s=marker_size)
 
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'Cell Size (\r{A})',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
@@ -356,31 +395,24 @@ lines = [Line2D([0], [0], color=rgbcode_diamond_m,markerfacecolor=rgbcode_black,
          Line2D([0], [0], color=rgbcode_diamond_d,markerfacecolor=rgbcode_white, marker=mark_d, linewidth=universal_linewidth),
          Line2D([0], [0], color=rgbcode_diamond_l,linestyle='dashed',linewidth=universal_linewidth),
 ]
-labels = ['N-ML Cell A','N-ML Cell C/N-ML','Bulk Cell Sizes']
+labels = [r'$N_{\rm ML}$ Cell A',r'$N_{\rm ML}$ Cell C/$N_{\rm ML}$','Bulk Cell Sizes']
 
 plt.legend(lines,labels,loc='upper right')
 
 
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
+second_axis_diamond()
 
 
 plot(showplot,'nml_cell0s_diamond')
 # </editor-fold>
-
-####Bulk Mudulous
+#
+# ####Bulk Mudulous
 # <editor-fold desc="K_0 Diamond">
 fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],bulk_modulus_diamond*1e-9,zorder=2,color=rgbcode_diamond_m,linewidth=linewidth)
 plt.scatter(n_layers[1:],bulk_modulus_diamond*1e-9,zorder=3,color=rgbcode_diamond_m,linewidth=linewidth, s=marker_size, marker=mark_d)
 plt.hlines(y=bulk_mod0_d0*1e-9,xmin=n_layers[1],xmax=n_layers[-1],zorder=1,color=adjust_lightness(rgbcode_diamond,adj_l),linewidth=linewidth,linestyle='dashed')
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'${K}_{0}$ (GPa)',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
@@ -389,37 +421,30 @@ plt.ylim(140,365)
 
 lines = [Line2D([0], [0], color=rgbcode_diamond_m,marker=mark_d,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_diamond,adj_l),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
 
 
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
+second_axis_diamond()
 
 
 plot(showplot,'nml_bulkmodulus_diamond')
 # </editor-fold>
-
-
-########################################################################################################################
-####### BetaSn Properties ##############################################################################################
-########################################################################################################################
-
-
-####Ground State Volumes
+#
+#
+# ########################################################################################################################
+# ####### BetaSn Properties ##############################################################################################
+# ########################################################################################################################
+#
+#
+# ####Ground State Volumes
 # <editor-fold desc="Vol_0 Betasn">
 fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],volumes0_betasn*1e30,zorder=2,color=adjust_lightness(rgbcode_betasn_m,0.9),linewidth=linewidth)
 plt.scatter(n_layers[1:],volumes0_betasn*1e30,zorder=3,color=adjust_lightness(rgbcode_betasn_m,0.9), linewidth=linewidth, s=marker_size,marker=mark_b)
 plt.hlines(y=vol0_b0*1e30,xmin=n_layers[1],xmax=n_layers[-1],zorder=1,color=adjust_lightness(rgbcode_betasn,adj_l-0.1),linewidth=linewidth,linestyle='dashed')
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'${\mathit{V}}_{0}$ (\r{A}$^3$/atom)',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
@@ -428,31 +453,23 @@ plt.ylim(14.5,19)
 
 lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_betasn_m,0.9),marker=mark_b,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_betasn,adj_l-0.1),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
 
 
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
-
+second_axis_betasn()
 
 plot(showplot,'nml_volumes0_betasn')
 # </editor-fold>
-
-####Transition Volumes
+#
+# ####Transition Volumes
 # <editor-fold desc="Vol_T Betasn">
 fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],transition_volumes_betasn*1e30,zorder=2,color=adjust_lightness(rgbcode_betasn_m,1.1),linewidth=linewidth)
 plt.scatter(n_layers[1:],transition_volumes_betasn*1e30,zorder=3,color=adjust_lightness(rgbcode_betasn_m,1.1), linewidth=linewidth, s=marker_size,marker=mark_b)
 plt.hlines(y=vol_b0*1e30,xmin=n_layers[1],xmax=n_layers[-1],zorder=1,color=adjust_lightness(rgbcode_betasn,adj_l+0.1),linewidth=linewidth,linestyle='dashed')
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'${\mathit{V}}_{T}$ (\r{A}$^3$/atom)',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
@@ -460,25 +477,18 @@ plt.ylim(14.5,19)
 
 lines = [Line2D([0], [0], color=adjust_lightness(rgbcode_betasn_m,1.1),marker=mark_b,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_betasn,adj_l+0.1),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
 
 
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
+second_axis_betasn()
 
 
 plot(showplot,'nml_tvolumes_betasn')
 # </editor-fold>
-
-####Cell dimensions
+#
+# ####Cell dimensions
 # <editor-fold desc="CellSize Betasn">
 fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],cell_a_betasn*1e10,zorder=3,color=rgbcode_betasn_m,linewidth=linewidth)
@@ -501,7 +511,7 @@ elif fold == 'eosztest' or fold == 'eostest':
 cellc0 = ((cb0*1e10/2))#+(bonds_betasn_max+bonds_betasn_min)/4)
 plt.hlines(y=cellc0,xmin=n_layers[1],xmax=n_layers[-1],zorder=2,color=adjust_lightness(rgbcode_betasn_d,adj_l),linewidth=linewidth,linestyle='dashed')
 
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'Cell Size (\r{A})',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
@@ -512,31 +522,25 @@ lines = [Line2D([0], [0], color=rgbcode_betasn_m,markerfacecolor=rgbcode_black,m
          Line2D([0], [0], color=rgbcode_betasn_d,markerfacecolor=rgbcode_white, marker=mark_b, linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_betasn_d,adj_l),linestyle='dashed',linewidth=universal_linewidth),
 ]
-labels = ['N-ML Cell A','Bulk Cell A','N-ML Cell C/N-ML','Bulk Cell C']
+labels = [r'$N_{\rm ML}$ Cell A','Bulk Cell A',r'$N_{\rm ML}$ Cell C/$N_{\rm ML}$','Bulk Cell C']
 
 plt.legend(lines,labels) #bbox_to_anchor=(0.5, 0.4)
 
 
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
+second_axis_betasn()
+
 
 
 plot(showplot,'nml_cell0s_betasn')
 # </editor-fold>
-
-####Bulk Mudulous
+#
+# ####Bulk Mudulous
 # <editor-fold desc="K_0 Betasn">
 fig = plt.figure(figsize=fs_s_11)
 plt.plot(n_layers[1:],bulk_modulus_betasn*1e-9,zorder=2,color=rgbcode_betasn_m,linewidth=linewidth)
 plt.scatter(n_layers[1:],bulk_modulus_betasn*1e-9,zorder=3,color=rgbcode_betasn_m,linewidth=linewidth, s=marker_size,marker=mark_b)
 plt.hlines(y=bulk_mod0_b0*1e-9,xmin=n_layers[1],xmax=n_layers[-1],zorder=1,color=adjust_lightness(rgbcode_betasn,adj_l),linewidth=linewidth,linestyle='dashed')
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'${K}_{0}$ (GPa)',fontsize=axis_fontsize)
 plt.ylim(140,365)
 plt.xticks(fontsize=tick_fontsize)
@@ -544,19 +548,13 @@ plt.yticks(fontsize=tick_fontsize)
 
 lines = [Line2D([0], [0], color=rgbcode_betasn_m,marker=mark_b,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_betasn,adj_l),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
 
 
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
-axes2.set_xticklabels(np.around((cell_c_betasn*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
+second_axis_betasn()
+
 
 
 plot(showplot,'nml_bulkmodulus_betasn')

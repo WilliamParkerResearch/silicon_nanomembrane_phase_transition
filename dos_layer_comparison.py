@@ -5,6 +5,12 @@ from scipy.signal import find_peaks
 from importlib import import_module
 from matplotlib.lines import Line2D
 
+#Use TeX fonts
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['font.sans-serif'] = "cmr10"
+mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['axes.formatter.useoffset'] = False
+
 adj_l = 1.2
 
 exchange_correlation = 'PBE'
@@ -155,31 +161,41 @@ plt.scatter(n_layers[1:],p_0_arr[1:],marker=mark_d,color=rgbcode_diamond,linewid
 
 plt.hlines(y=p_0_arr[0],xmin=n_layers[1],xmax=n_layers[-1],color=adjust_lightness(rgbcode_diamond,adj_l),linestyle='dashed',linewidth=universal_linewidth)
 
-plt.xlabel('N-ML',fontsize=axis_fontsize)
+plt.xlabel(r'$N_{\rm ML}$',fontsize=axis_fontsize)
 plt.ylabel(r'$\rho$/atom',fontsize=axis_fontsize)
 plt.xticks(fontsize=tick_fontsize)
 plt.yticks(fontsize=tick_fontsize)
 
 lines = [Line2D([0], [0], color=rgbcode_diamond_m,marker=mark_d,linewidth=universal_linewidth),
          Line2D([0], [0], color=adjust_lightness(rgbcode_diamond,adj_l),linestyle='dashed',linewidth=universal_linewidth)]
-labels = ['N-ML','Bulk']
+labels = [r'$N_{\rm ML}$','Bulk']
 
 plt.legend(lines,labels,loc='upper right')
-
-
-axes1 = plt.gca()
-axes2 = axes1.twiny()
-xticks2 = axes1.get_xticks()
-axes2.set_xticks(xticks2)
-axes2.set_xlabel(r'd (\r{A})',fontsize=axis_fontsize)
-axes2.tick_params(labelsize=tick_fontsize-2)
 
 
 from layer_comparisons import cell_c_diamond
 
 
-axes2.set_xticklabels(np.around((cell_c_diamond*axes1.get_xticks())*1e10,decimals=2))
-axes2.set_xlim(axes1.get_xlim())
+def second_axis_diamond():
+    axes1 = plt.gca()
+    axes2 = axes1.twiny()
+    xticks2 = axes1.get_xticks()
+    axes2.set_xlabel(r'$d ({\rm \AA})$',fontsize=axis_fontsize)
+    axes2.tick_params(labelsize=tick_fontsize-2)
 
+    xlabels2 = np.around(cell_c_diamond[(xticks2[1:-1]-1).astype(int)]*1e10,decimals=2)
+    xlabels2 = np.append(xlabels2,'')
+    xlabels2 = np.append('',xlabels2)
+
+    x1_limi = axes1.get_xlim()[0]
+    x1_limf = axes1.get_xlim()[1]
+    nml_diff = xticks2[1:-1][-1]-xticks2[1:-1][0]
+    d_diff = xlabels2[1:-1][-1].astype(float)-xlabels2[1:-1][0].astype(float)
+    x2_limi = x1_limi*d_diff/nml_diff
+    x2_limf = x1_limf*d_diff/nml_diff
+    axes2.set_xlim(x2_limi,x2_limf)
+    return
+
+second_axis_diamond()
 
 plot(True,'nml_fermi_dos_diamond')
