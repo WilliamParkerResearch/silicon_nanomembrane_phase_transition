@@ -5,7 +5,7 @@ from importlib import import_module
 
 exchange_correlation = 'PBE'
 phase = 'diamond'
-directoryofdata0 = 'DataFolder' + '.' + exchange_correlation + '.' + 'bands' + '.' + phase + '.' + 'Data_Bands_10L'
+directoryofdata0 = 'DataFolder' + '.' + exchange_correlation + '.' + 'bands' + '.' + phase + '.' + 'Data_Bands_22L'
 data = import_module(directoryofdata0)
 
 dos = data.dos

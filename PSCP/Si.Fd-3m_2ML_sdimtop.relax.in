@@ -1,0 +1,72 @@
+ &control
+    pseudo_dir        = '/share/pseudo'
+    calculation       = 'relax'
+    title             = 'Relaxation of atomic positions for single monolayer slab of Si using PBE'
+    verbosity         = 'low'
+    nstep             = 150
+    tstress           = .true.
+    tprnfor           = .true.
+    outdir            = '.'
+    prefix            = 'Si.Fd-3m_2ML'
+    max_seconds       = 1.00d7       ! 115 days
+    etot_conv_thr     = 7.35d-04     ! 10 meV = 1.6 zJ
+    forc_conv_thr     = 1.94d-04     ! 100 meV / angstrom = 160 pN
+ /                 
+ &system           
+    ibrav             = 0
+    nosym             = .true.
+    celldm(1)         = 10.26845065753
+    nat               = 16
+    ntyp              = 1
+    nbnd              = 48           ! = 1.5 * N_atom * N_elec/atom / 2 
+    ecutwfc           = 45.0
+    ecutrho           = 175.0
+    occupations       = 'smearing'
+    degauss           = 1.00d-2
+    smearing          = 'gaussian'
+    nspin             = 1
+    assume_isolated   = 'none'
+ /                 
+ &electrons        
+    electron_maxstep  = 500
+    scf_must_converge = .true.
+    conv_thr          = 1.00d-10
+    adaptive_thr      = .false.
+    mixing_mode       = 'local-TF'
+    mixing_beta       = 0.5
+    mixing_ndim       = 8
+    diagonalization   = 'cg'
+    startingpot       = 'atomic'
+    startingwfc       = 'atomic+random'
+ /
+ &ions
+    ion_dynamics      = 'damp'
+    ion_positions     = 'default'
+    pot_extrapolation = 'atomic'
+    wfc_extrapolation = 'none'
+ /
+ATOMIC_SPECIES
+ Si  28.086  Si.pbe-nl-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS (angstrom)
+Si       2.920781319   5.848069061   6.436937040
+Si       6.836011854   2.134818622   5.939768801
+Si       2.967476169   3.671259037   5.443565051
+Si       4.536138134   2.227443731   6.441663079
+Si      -0.862200390   3.155262928   8.657669112
+Si       2.919031251  -0.449278651   8.663574708
+Si       1.001253036   4.113340149   9.813852080
+Si       3.767127801   1.334000164   9.984358421
+Si       2.276908194   2.676455520  11.180438853
+Si      -0.245897619   0.039990798  11.373979650
+Si       1.106781136   1.429260976  12.751463071
+Si       3.676163368   3.986646905  12.573827879
+Si      -0.313213905   2.812502425  14.071908774
+Si       2.354143870  -0.088963923  14.053181118
+Si       0.620110022   4.498017728  15.489259053
+Si       4.478198490   0.649987261  14.760798978
+K_POINTS automatic
+ 8 8 1 0 0 0
+CELL_PARAMETERS alat
+    1.00 0.00 0.00
+    0.00 1.00 0.00
+    0.00 0.00 3.38
